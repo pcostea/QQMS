@@ -1,3 +1,2 @@
-Hello from local!
-
-Issue 6 closed.
+Hello from local
+!
