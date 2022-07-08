@@ -4,7 +4,7 @@
 
 create table product (
     uid serial primary key not null,
-    constraint product_pkey
+    constraint product_fkey
         foreign key(corporation_id)
             references corporation(uid),
     name varchar(50) not null,
