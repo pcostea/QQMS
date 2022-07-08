@@ -13,3 +13,5 @@ create table product (
     valid_from date,
     valid_until date
 )
+
+--rollback DROP TABLE product;
