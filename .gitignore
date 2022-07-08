@@ -1,3 +1,6 @@
+#Liquibase local configuration
+**/liquibase.properties
+
 # Binaries for programs and plugins
 *.exe
 *.exe~
