@@ -1,7 +1,11 @@
---changeset Eugeniu&Eugen:1 labels:issue9 context:create-ERCSA table
+--changeset Eugeniu&Eugen:9002 labels:issue9 context:drop-ERCSA table
+
+rollback DROP TABLE ERCSA;
+
+--changeset Eugeniu&Eugen:9003 labels:issue9 context:newversion-ERCSA table
 
 create table ERCSA (
-    corporation_id integer, 
+    corporation_id integer not null, 
      constraint ERCSA_fkey
       foreign key(corporation_id)
        references corporation(uid),
@@ -14,4 +18,4 @@ create table ERCSA (
     valid_until date
 )
 
---rollback DROP TABLE ERCSA;
+
