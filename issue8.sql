@@ -4,13 +4,14 @@
 -- corporation table need to be created first
 create table product (
     uid serial primary key not null,
+    corporation_id integer not null,
     constraint product_fkey
         foreign key(corporation_id)
             references corporation(uid),
     name varchar(50) not null,
     short_name varchar(25),
     book varchar(250),
-    timestamp timestamp,
+    "timestamp" timestamp,
     valid_from date,
     valid_until date
 )
