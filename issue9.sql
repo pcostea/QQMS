@@ -1,6 +1,7 @@
+--liquibase formatted sql
 --changeset Eugeniu&Eugen:9002 labels:issue9 context:drop-ERCSA table
 
-rollback DROP TABLE ERCSA;
+DROP TABLE ERCSA;
 
 --changeset Eugeniu&Eugen:9003 labels:issue9 context:newversion-ERCSA table
 
