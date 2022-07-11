@@ -16,3 +16,8 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+
+
+# NodeJS ignore files
+# Do not track config directory because it contains sensitive information
+**/config

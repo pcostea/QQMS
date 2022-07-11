@@ -1,7 +1,0 @@
-my first file ...
-
-
-closing issue #6
-
-
-issue #1 done
