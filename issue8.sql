@@ -4,9 +4,9 @@
 -- corporation table need to be created first
 create table product (
     uid serial primary key not null,
---    constraint product_fkey
---        foreign key(corporation_id)
---            references corporation(uid),
+    constraint product_fkey
+        foreign key(corporation_id)
+            references corporation(uid),
     name varchar(50) not null,
     short_name varchar(25),
     timestamp timestamp,
