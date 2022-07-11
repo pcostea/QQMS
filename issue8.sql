@@ -9,6 +9,7 @@ create table product (
             references corporation(uid),
     name varchar(50) not null,
     short_name varchar(25),
+    book varchar(250),
     timestamp timestamp,
     valid_from date,
     valid_until date
