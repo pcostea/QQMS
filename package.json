@@ -1,0 +1,24 @@
+{
+  "name": "qqms",
+  "version": "1.0.0",
+  "description": "Qualitative Questionnaire Management System",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RiskBox/QQMS.git"
+  },
+  "keywords": [
+    "qqms",
+    "risk accounting",
+    "risk box"
+  ],
+  "author": "Dragos STOICA",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RiskBox/QQMS/issues"
+  },
+  "homepage": "https://github.com/RiskBox/QQMS#readme"
+}
