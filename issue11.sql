@@ -1,21 +1,19 @@
 --liquibase formatted sql
 /* https://www.liquibase.org/documentation/sql_format.html */
 
---changeset ion-ulinici:1101 labels: issue11 context: create-table-product
---comment: TODO add corporation_id column   
+--changeset ion-ulinici:1102 labels: issue11 context: create-business_component_product-product
+--comment: TODO  
 /* Insert SQL change objects here */
 
-create table product (
+create table business_component_product (
     uid serial primary key not null,
-    name varchar(50) not null,
-    short_name varchar(50),
-    book varchar(50),
+    mapping varchar(50) not null,
     timestamp timestamp,
     valid_from timestamp,
     valid_until timestamp
 )
 
---rollback DROP TABLE product;
+--rollback DROP TABLE business_component_product;
 
 
 
