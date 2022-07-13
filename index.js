@@ -17,7 +17,6 @@ var path = require('path');
 const hdbs = require("express-handlebars");
 var fs = require('fs');
 const { type } = require('express/lib/response');
-const { spawn } = require("child_process");
 var compression = require('compression')
 var pino = require('express-pino-logger')()
 
@@ -78,6 +77,29 @@ process.on('SIGTERM', () => {
     })
 })
 
+
+// the pool will emit an error on behalf of any idle clients
+// it contains if a backend error or network partition happens
+pool.on('error', async (err, client) => {
+    pino.logger.error('Unexpected error on idle client', err)
+    pino.logger.info('PostgreSQL Pool end')
+    await pool.end()
+    pino.logger.info('Pool has drained')
+    process.exit(-1)
+})
+
 const server = app.listen(config.get('application.port'));
 pino.logger.info(`Express started on port ${config.get('application.port')} in ENV::${env}`);
 
+// async/await - check out a client
+;(async () => {
+    const client = await pool.connect()
+    try {
+      const res = await client.query('SELECT NOW()')
+      pino.logger.info(`PostgreSQL server time: ${res.rows[0].now}`)
+    } finally {
+      // Make sure to release the client before any error handling,
+      // just in case the error handling itself throws an error.
+      client.release()
+    }
+  })().catch(err => pino.logger.error(err.stack))
