@@ -126,14 +126,15 @@ DROP FUNCTION IF EXISTS getuser;
 
 --changeset dragos-constantin-stoica:71014 runAlways:true runOnChange:true endDelimiter:"" labels:get-user context:issue71
 create or replace function getuser(
-   user_email varchar(255) 
+   user_email varchar(255),
+   user_password varchar(255) 
 ) RETURNS application_user
 language sql
 as $$
-    SELECT * FROM application_user WHERE email = user_email;
+    SELECT * FROM application_user WHERE email = user_email AND password = user_password;
 $$;
 --rollback DROP FUNCTION getuser;
---use this function in a stamement like SELECT * FROM getuser('email_address');
+--use this function in a stamement like SELECT * FROM getuser('email_address', 'user_hash_password');
 
 --changeset dragos-constantin-stoica:71015 runAlways:true runOnChange:true labels:set-status context:issue71
 DROP PROCEDURE IF EXISTS setuserstaus;

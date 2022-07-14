@@ -7,6 +7,7 @@ const env = process.env.NODE_ENV || 'development'
 const https = require('https')
 
 const express = require('express')
+var session = require('express-session')
 let crypto;
 try {
     crypto = require('crypto');
@@ -33,6 +34,11 @@ const pool = new Pool(poolConfig);
 const app = express()
 const port = config.get('application.port')
 
+app.use(session({
+    secret: 'The quick brown fox jumps over the lazy dog.',
+    resave: false,
+    saveUninitialized: true
+}))
 app.use(compression())
 app.use(pino)
 
@@ -46,6 +52,98 @@ app.set("views", path.resolve(__dirname, "./views"));
 
 
 var hbs = hdbs.create({ defaultLayout: 'svg' });
+
+// middleware to test if authenticated
+function isAuthenticated(req, res, next) {
+    if (req.session.user) next()
+    else next('route')
+}
+
+
+/*
+ * Handle endpoints
+ */
+
+app.post("/checksession", function(req, res){
+    if(req.session.user){
+        res.json({status:"OK"})
+    }else{
+        res.redirect('/index.html')
+    }
+})
+
+app.get("/dashboard", isAuthenticated, function(req, res){
+        res.redirect('/main.html')
+})
+app.get("/dashboard", function(req, res){
+    res.redirect('/index.html')
+})
+
+app.post('/logout', function (req, res, next) {
+    // logout logic
+
+    // clear the user from the session object and save.
+    // this will ensure that re-using the old session id
+    // does not have a logged in user
+    req.session.user = null
+    req.session.save(function (err) {
+        if (err) next(err)
+        // regenerate the session, which is good practice to help
+        // guard against forms of session fixation
+        
+        req.session.regenerate(function (err) {
+            if (err) next(err)
+            res.redirect('/')
+        })
+        
+    })
+})
+
+app.post('/login', async function (req, res, next) {
+    //We expect a JSON in body
+
+    const client = await pool.connect()
+    try {
+        //pino.logger.info(req.body.password)
+        let result = await client.query(`SELECT * FROM getuser('${req.body.email}', '${req.body.password}') AS T1;`)
+        //pino.logger.info(result)
+        if (result.rows[0].email == req.body.email) {
+            await client.query(`CALL setuserlogin('${req.body.email}')`)
+
+            req.session.regenerate(function (err) {
+                if (err) next(err)
+
+                // store user information in session, typically a user id
+                req.session.user = result.rows[0].uid
+
+                // save the session before redirection to ensure page
+                // load does not happen before session is saved
+                
+                req.session.save(function (err) {
+                    if (err) return next(err)
+                    //res.redirect('main.html')
+                })
+                
+                res.json({ status: 'OK - user authenticated and session saved' });
+            })
+
+
+            //open a server session
+        } else {
+            res.json({ status: 'User authentication error!' });
+        }
+
+    } catch (err) {
+        pino.logger.error(err);
+        res.json({ status: 'error' });
+    } finally {
+        // Make sure to release the client before any error handling,
+        // just in case the error handling itself throws an error.
+        client.release()
+    }
+
+});
+
 
 /*
  * Error pages
@@ -69,7 +167,6 @@ app.use(function (err, req, res, next) {
     });
 });
 
-
 process.on('SIGTERM', () => {
     pino.logger.info('SIGTERM signal received: closing HTTP server')
     server.close(() => {
@@ -92,14 +189,14 @@ const server = app.listen(config.get('application.port'));
 pino.logger.info(`Express started on port ${config.get('application.port')} in ENV::${env}`);
 
 // async/await - check out a client
-;(async () => {
+; (async () => {
     const client = await pool.connect()
     try {
-      const res = await client.query('SELECT NOW()')
-      pino.logger.info(`PostgreSQL server time: ${res.rows[0].now}`)
+        const res = await client.query('SELECT NOW()')
+        pino.logger.info(`PostgreSQL server time: ${res.rows[0].now}`)
     } finally {
-      // Make sure to release the client before any error handling,
-      // just in case the error handling itself throws an error.
-      client.release()
+        // Make sure to release the client before any error handling,
+        // just in case the error handling itself throws an error.
+        client.release()
     }
-  })().catch(err => pino.logger.error(err.stack))
+})().catch(err => pino.logger.error(err.stack))

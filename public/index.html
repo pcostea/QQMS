@@ -77,25 +77,38 @@
             <h1 class="h3 mb-3 fw-normal">Please login in</h1>
 
             <div class="form-floating">
-                <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+                <input type="email" class="form-control" id="user_email" placeholder="name@example.com">
                 <label for="floatingInput">Email address</label>
             </div>
             <div class="form-floating">
-                <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
+                <input type="password" class="form-control" id="user_password" placeholder="Password">
                 <label for="floatingPassword">Password</label>
             </div>
-
+            <!--
             <div class="checkbox mb-3">
                 <label>
                     <input type="checkbox" value="remember-me"> Remember me
                 </label>
             </div>
-            <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
-            <p class="mt-5 mb-3 text-muted">&copy; 1975–2022</p>
+            -->
+            <button class="w-100 btn btn-lg btn-primary" type="button" onclick="doLogin()">Sign in</button>
+            <p class="mt-5 mb-3 text-muted">&copy; 2017–2022</p>
         </form>
     </main>
 
-
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <img src="img/rasb_icon.png" height="16px" class="rounded me-2" alt="RASB">
+                <strong class="me-auto">RASB</strong>
+                <small>now</small>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body" id="msgArea">
+                This is a message from server.
+            </div>
+        </div>
+    </div>
     <!-- Optional JavaScript; choose one of the two! -->
 
     <!-- Option 1: Bootstrap Bundle with Popper -->
@@ -108,6 +121,10 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
     -->
+    <script src="js/cryptojs/rollups/sha3.js"></script>
+    <script src="js/cryptojs/components/enc-base64-min.js"></script>
+    <script src="js/login.js"></script>
+
 </body>
 
 </html>
