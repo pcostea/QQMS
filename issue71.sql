@@ -49,7 +49,8 @@ create table application_user (
     password varchar(255) not null,
     status varchar(255) not null,
     created timestamp not null,
-    constraint uq_email UNIQUE(uid, email)
+    last_login timestamp,
+    constraint uq_email UNIQUE(email)
 );
 --rollback DROP TABLE application_user;
 
@@ -126,12 +127,11 @@ DROP FUNCTION IF EXISTS getuser;
 --changeset dragos-constantin-stoica:71014 runAlways:true runOnChange:true endDelimiter:"" labels:get-user context:issue71
 create or replace function getuser(
    user_email varchar(255) 
-) RETURNS SETOF application_user
-language plpgsql
+) RETURNS application_user
+language sql
 as $$
-begin
     SELECT * FROM application_user WHERE email = user_email;
-end;$$
+$$;
 --rollback DROP FUNCTION getuser;
 --use this function in a stamement like SELECT * FROM getuser('email_address');
 
