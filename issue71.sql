@@ -227,6 +227,4 @@ INSERT INTO business_component(corporation_id, version, component, service, time
 commit;
 
 --changeset dragos-constantin-stoica:71025 runAlways:true runOnChange:true labels:insert-data-into-application_user context:issue71
-CALL newapplicationuser('Dragos Stoica', 'dragos.constantin.stoica@gmail.com', md5('parola1234'));
-CALL newapplicationuser('Dragos Stoica', 'dragos.constantin.stoica@gmail.com', md5('parola1234'));
-CALL newapplicationuser('Dragos Stoica', 'dragos.constantin.stoica@gmail.com', md5('parola1234'));
+CALL newapplicationuser('Dragos Stoica', 'dragos.constantin.stoica@gmail.com', encode(digest('test1234', 'sha384'), 'base64'));
