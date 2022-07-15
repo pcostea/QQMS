@@ -24,10 +24,10 @@ create table corporation (
  */
 
 --changeset dragos-constantin-stoica:61003 runAlways:true runOnChange:true labels:create-newcorporation context:issue61
-DROP PROCEDURE IF EXISTS newcoporation;
+DROP PROCEDURE IF EXISTS newcorporation;
 
 --changeset dragos-constantin-stoica:61004 runAlways:true runOnChange:true endDelimiter:"" labels:create-newcorporation context:issue61
-create or replace procedure newcoporation(
+create or replace procedure newcorporation(
    corporation_name varchar(255)
 )
 language plpgsql
@@ -74,9 +74,9 @@ end;$$
  */
 
 --changeset dragos-constantin-stoica:61009 runAlways:true runOnChange:true labels:insert-data-into-corporation context:issue61
-CALL newcoporation('ACME');
-CALL newcoporation('FED');
-CALL newcoporation('ECB');
+CALL newcorporation('ACME');
+CALL newcorporation('FED');
+CALL newcorporation('ECB');
 
 --changeset dragos-constantin-stoica:61010 runAlways:true runOnChange:true labels:delete-data-from-corporation context:issue61
 CALL delcorpoation('ACME');
