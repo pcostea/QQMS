@@ -23,7 +23,7 @@ function doLogin() {
     let user_email = document.getElementById('user_email').value,
         user_password = document.getElementById('user_password').value;
     //Hash password
-    user_password = CryptoJS.SHA3(user_password).toString(CryptoJS.enc.Base64);
+    user_password = CryptoJS.SHA384(user_password).toString(CryptoJS.enc.Base64);
     //Send data to server 
     postData('/login', { email: user_email, password: user_password })
         .then(data => {
