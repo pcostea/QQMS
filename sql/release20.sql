@@ -1,5 +1,12 @@
 --liquibase formatted sql
 
+/****************************
+
+  create operational tables
+
+****************************/
+
+
 --changeset dragos-constantin-stoica:61001 runAlways:true runOnChange:true  labels:delete-corporation context:issue61
 DROP TABLE IF EXISTS corporation CASCADE;
 
@@ -230,3 +237,96 @@ create table ercsa_response (
 
 );
 --rollback DROP TABLE ercsa_response;
+
+/************************
+
+create master data tables
+
+*************************/
+
+--changeset dragos-constantin-stoica:76001 runAlways:true runOnChange:true labels:delete-md_business_component context:issue76
+DROP TABLE IF EXISTS md_business_component CASCADE;
+
+--changeset dragos-constantin-stoica:76002 runAlways:true runOnChange:true labels:create-md_business_component context:issue76
+create table md_business_component (
+    component varchar(255) not null,
+    service varchar(255) not null,
+    shortname varchar(6) not null
+);
+--rollback DROP TABLE md_business_component;
+
+
+--changeset max:77001 runAlways:true runOnChange:true  labels:delete-md_product context:issue77
+DROP TABLE IF EXISTS md_product CASCADE;
+
+--changeset dragos-constantin-stoica:77002 runAlways:true runOnChange:true labels:create-md_product context:issue77
+create table md_product (
+    name varchar(255) not null,
+    shortname varchar(6) not null,
+    book varchar(255) not null
+);
+--rollback DROP TABLE md_product;
+
+--changeset max:78001 runAlways:true runOnChange:true  labels:delete-md_risk_type context:issue78
+DROP TABLE IF EXISTS md_risk_type CASCADE;
+
+--changeset max:78002 runAlways:true runOnChange:true labels:create-md_risk_type context:issue78
+create table md_risk_type (
+    name varchar(50) not null,
+    shortname varchar(6)
+);
+--rollback DROP TABLE md_risk_type;
+
+
+--changeset dragos-constantin-stoica:79001 runAlways:true runOnChange:true labels:delete-md_ercsa context:issue79
+DROP TABLE IF EXISTS md_ercsa CASCADE;
+
+--changeset dragos-constantin-stoica:79002 runAlways:true runOnChange:true labels:create-md_ercsa context:issue79
+create table md_ercsa (
+    type varchar(255) not null,
+    name varchar(255) not null,
+    shortname varchar(6) not null
+);
+--rollback DROP TABLE md_ercsa;
+
+--changeset dragos-constantin-stoica:80001 runAlways:true runOnChange:true labels:delete-md_euf context:issue80
+DROP TABLE IF EXISTS md_euf CASCADE;
+
+--changeset dragos-constantin-stoica:80002 runAlways:true runOnChange:true labels:create-md_euf context:issue80
+create table md_euf (
+    product_shortname varchar(6) not null,
+    risktype_shortname varchar(6) not null,
+    value integer not null
+);
+--rollback DROP TABLE md_euf;
+
+--changeset dragos-constantin-stoica:81001 runAlways:true runOnChange:true labels:delete-md_business_component_product context:issue81
+DROP TABLE IF EXISTS md_business_component_product CASCADE;
+
+--changeset dragos-constantin-stoica:81002 runAlways:true runOnChange:true labels:create-md_business_component_product context:issue81
+create table md_business_component_product (
+    product_shortname varchar(6) not null,
+    businesscomponent_shortname varchar(6) not null    
+);
+--rollback DROP TABLE md_business_component_product;
+
+--changeset dragos-constantin-stoica:82001 runAlways:true runOnChange:true labels:delete-md_business_component_ercsa context:issue82
+DROP TABLE IF EXISTS md_business_component_ercsa CASCADE;
+
+--changeset dragos-constantin-stoica:82002 runAlways:true runOnChange:true labels:create-md_business_component_ercsa context:issue82
+create table md_business_component_ercsa (
+    ercsa_shortname varchar(6) not null,
+    businesscomponent_shortname varchar(6) not null,
+    weight integer not null
+
+);
+--rollback DROP TABLE md_business_component_ercsa;
+
+
+/**************************
+
+  create stored procedures
+
+***************************/
+
+

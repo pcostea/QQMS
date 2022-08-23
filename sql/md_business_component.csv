@@ -1,0 +1,44 @@
+component,service,shortname
+Transaction Processing (Operations),Product and Service Pricing,TPOPSP
+Transaction Processing (Operations),Deal Structuring,TPODES
+Transaction Processing (Operations),Pre-Trade/Deal Validation,TPPTDV
+Transaction Processing (Operations),Trade/Deal Execution and Capture,TPTDEC
+Transaction Processing (Operations),Transaction Origination and Capture,TPOTOC
+Transaction Processing (Operations),Cash Management,TPOCAM
+Transaction Processing (Operations),Trade/Deal Confirmation and Matching,TPTDCM
+Transaction Processing (Operations),Position Control and Amendments,TPOPCA
+Transaction Processing (Operations),Credit Limit Monitoring,TPOCLM
+Transaction Processing (Operations),Trade/Deal Limit Monitoring,TPTDLM
+Transaction Processing (Operations),Trade/Deal Settlements,TPOTDS
+Transaction Processing (Operations),Payments,TPOPAY
+Transaction Processing (Operations),Collateral Management,TPOCOM
+Transaction Processing (Operations),Custody/Safekeeping,TPOCUS
+Transaction Processing (Operations),Loans Processing,TPOLOP
+Transaction Processing (Operations),Treasury Processing,TPOTRP
+Transaction Processing (Operations),FX Processing,TPOFXP
+Transaction Processing (Operations),Securities Processing,TPOSEP
+Transaction Processing (Operations),Derivatives Processing,TPODEP
+Transaction Processing (Operations),Nostro Reconcilement,TPONOR
+Transaction Processing (Operations),Trading Account Reconciliations,TPOTAR
+Transaction Processing (Operations),G/L Proofs and Substantiation,TPGLPS
+Trading,FX Trading,TRAFXT
+Trading,Futures Trading,TRAFUT
+Trading,Asset Backed Securities Trading,TRABST
+Trading,Equities Trading,TRAEQT
+Trading,Bond Trading,TRABOT
+Core Systems,Client and Counterparty Data,COSCCD
+Core Systems,Market Data,COSMAD
+Core Systems,Products and Instruments Data,COSPID
+Core Systems,Trading System,COSTRS
+Core Systems,Global Loan System,COSGLO
+Core Systems,Funds Transfer System,COSFTS
+Core Systems,Global Nostros System,COSGNS
+Core Systems,Global Ledger System,COSGLS
+Core Systems,Funding and Liquidity System,COSFLS
+Reference Data Management,Client and Counterparty Data,RDMCCD
+Reference Data Management,Market Data,RDMMAD
+Reference Data Management,Products and Instruments Data,RDMPID
+All Other,Credit (Lending),ALOCRL
+All Other,Treasury (Funding),ALOTRF
+All Other,Treasury (Interest Rate),ALOTIR
+All Other,Sales (Selling),ALOSAS

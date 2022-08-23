@@ -1,0 +1,22 @@
+type,name,shortname
+Generic,Control,CONTRL
+Generic,People,PEOPLE
+Generic,Execution,EXECTN
+Generic,Business Continuity,BUSCON
+Generic,Risk Control,RSKCTL
+Generic,Internal Logical Access Management,INTLAM
+Generic,Physical Access,PHSACC
+Generic,Policies and Procedures,POLPRO
+Technical,Data Quality Management,DATQTY
+Technical,Vendor Management,VENDOR
+Technical,Core Systems Management,CORSYS
+Technical,External Logical Access Management,EXTLAM
+Technical,Trading,TRDING
+Technical,Model Management,MODMGT
+Technical,Corporate Credit Assessment and Approval,CCRASS
+Technical,Corporate Credit Administration,CCRADM
+Technical,Liquidity Management,LIQDTY
+Technical,Treasury Deal Management,TRDEAL
+Technical,Product Review and Approval,PRDAPP
+Technical,Interest Rate Risk Management,INTRAT
+Technical,Environment Protection,ENVMNT

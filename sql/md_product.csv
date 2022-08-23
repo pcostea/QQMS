@@ -1,0 +1,11 @@
+name,shortname,book
+FX Forwards,FXFWDS,Trading
+Commercial Loans (Secured),COMLNS,Banking
+Fixed Term Deposits,FXDTDS,Banking
+Repos,REPOS,Banking
+Cross Currency Swaps,XCSWPS,Trading
+Futures,FUTRES,Trading
+Collateralized Debt Obligations (CDOs),CDOS,Trading
+Equities,EQTIES,Trading
+Fixed Income,FXDINC,Trading
+Payment Orders,PMTORD,Banking
