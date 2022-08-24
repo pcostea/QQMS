@@ -13,11 +13,11 @@ DROP TABLE IF EXISTS corporation CASCADE;
 --changeset dragos-constantin-stoica:61002 runAlways:true runOnChange:true labels:create-corporation context:issue61
 create table corporation (
     uid serial primary key not null,
-    corporationname varchar(255) not null,
+    name varchar(255) not null,
     ts timestamp not null,
     valid_from timestamp not null,
     valid_until timestamp,
-    constraint uq_name UNIQUE(corporationname)
+    constraint uq_name UNIQUE(name)
 );
 --rollback DROP TABLE corporation;
 
@@ -32,12 +32,12 @@ create table risk_type (
     constraint risk_type_fkey
         foreign key(corporation_id)
             references corporation(uid),
-    risktypename varchar(50) not null,
-    risktypeshortname varchar(6),
+    name varchar(50) not null,
+    shortname varchar(6),
     ts timestamp,
     valid_from date,
     valid_until date,
-	CONSTRAINT uq_risktype UNIQUE(corporation_id, risktypename, risktypeshortname)
+	CONSTRAINT uq_risktype UNIQUE(corporation_id, name, shortname)
 );
 --rollback DROP TABLE risk_type;
 
@@ -48,8 +48,8 @@ DROP TABLE IF EXISTS product CASCADE;
 create table product (
     uid serial primary key not null,
     corporation_id integer not null,
-    productname varchar(255) not null,
-    productshortname varchar(255) not null,
+    name varchar(255) not null,
+    shortname varchar(255) not null,
     book varchar(255) not null,
     ts timestamp not null,
     valid_from timestamp not null,
@@ -57,7 +57,7 @@ create table product (
     constraint corporation_fkey
         foreign key(corporation_id)
             references corporation(uid),
-    constraint uq_product UNIQUE(corporation_id, productname, productshortname, book)
+    constraint uq_product UNIQUE(corporation_id, name, shortname, book)
 );
 --rollback DROP TABLE product;
 
@@ -68,10 +68,10 @@ DROP TABLE IF EXISTS business_component CASCADE;
 create table business_component (
     uid serial primary key,
     corporation_id integer not null,
-    businesscomponentversion varchar(255) not null,
+    version varchar(255) not null,
     component varchar(255) not null,
     service varchar(255) not null,
-    businesscomponentshortname varchar(6) not null,
+    shortname varchar(6) not null,
     ts timestamp not null,
     valid_from timestamp not null,
     valid_until timestamp,
@@ -111,8 +111,7 @@ create table user_to_business_component_mapping (
             references business_component(uid),
     constraint application_user_fkey
         foreign key(application_user_id)
-            references application_user(uid),
-    constraint uq_mapping UNIQUE(business_component_id, application_user_id)
+            references application_user(uid)
 );
 --rollback DROP TABLE user_to_business_component_mapping;
 
@@ -123,7 +122,7 @@ DROP TABLE IF EXISTS transaction_value CASCADE;
 create table transaction_value (
     uid serial primary key not null,
     product_id integer not null,
-    monetaryvalue money not null,
+    value money not null,
     currency varchar(3) not null,
     ts timestamp not null,
     constraint product_fkey
@@ -140,9 +139,9 @@ DROP TABLE IF EXISTS ercsa CASCADE;
 create table ercsa (
     uid serial primary key,
     corporation_id integer not null,
-    ercsatype varchar(255) not null,
-    ercsaname varchar(255) not null,
-    ercsashortname varchar(6) not null,
+    type varchar(255) not null,
+    name varchar(255) not null,
+    shortname varchar(6) not null,
     ts timestamp not null,
     valid_from timestamp not null,
     valid_until timestamp,
@@ -160,8 +159,8 @@ create table euf (
     uid serial primary key,
     product_id integer not null,
     risk_type_id integer not null,
-    eufvalue integer not null,
-    eufversion varchar(6) not null,
+    value integer not null,
+    version varchar(6) not null,
     ts timestamp not null,
     valid_from timestamp not null,
     valid_until timestamp,
@@ -323,6 +322,27 @@ create table md_business_component_ercsa (
 --rollback DROP TABLE md_business_component_ercsa;
 
 
+--changeset dragos-constantin-stoica:81001 runAlways:true runOnChange:true labels:delete-md_business_component_product context:issue81
+DROP TABLE IF EXISTS md_business_component_product CASCADE;
+
+--changeset dragos-constantin-stoica:81002 runAlways:true runOnChange:true labels:create-md_business_component_product context:issue81
+create table md_business_component_product (
+    product_shortname varchar(6) not null,
+    businesscomponent_shortname varchar(6) not null    
+);
+--rollback DROP TABLE md_business_component_product;
+
+--changeset dragos-constantin-stoica:82003 runAlways:true runOnChange:true labels:delete-md_application_user context:issue82
+DROP TABLE IF EXISTS md_application_user CASCADE;
+
+--changeset dragos-constantin-stoica:82004 runAlways:true runOnChange:true labels:create-md_application_user context:issue82
+create table md_application_user (
+    username varchar(255) not null,
+    email varchar(255) not null,
+    businesscomponent_shortname varchar(6) not null
+);
+--rollback DROP TABLE md_application_user;
+
 /**************************
 
   create stored procedures
@@ -330,3 +350,29 @@ create table md_business_component_ercsa (
 ***************************/
 
 
+--changeset dragos-constantin-stoica:71013 runAlways:true runOnChange:true labels:get-user context:issue71
+DROP FUNCTION IF EXISTS getuser;
+
+--changeset dragos-constantin-stoica:71014 runAlways:true runOnChange:true endDelimiter:"" labels:get-user context:issue71
+create or replace function getuser(
+   user_email varchar(255),
+   user_password varchar(255) 
+) RETURNS application_user
+language sql
+as $$
+    SELECT * FROM application_user WHERE email = user_email AND password = user_password;
+$$;
+--rollback DROP FUNCTION getuser;
+--use this function in a stamement like SELECT * FROM getuser('email_address', 'user_hash_password');
+
+--changeset dragos-constantin-stoica:71020 runAlways:true runOnChange:true endDelimiter:"" labels:set-lastlogin context:issue71
+create or replace procedure setuserlogin(
+   user_email varchar(255)
+)
+language plpgsql
+as $$
+begin
+    -- update user password and does nothing if user does not exist
+    UPDATE application_user SET last_login = NOW() WHERE email = user_email;
+end;$$
+--rollback DROP PROCEDURE setuserlogin;

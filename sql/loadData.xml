@@ -134,4 +134,30 @@
     </loadUpdateData> 
 </changeSet>
 
+<changeSet author="dragos-constantin-stoica" id="application user - business component" runOnChange="true" runAlways="true">
+    <loadUpdateData catalogName="catalogue"
+                    commentLineStartsWith= "//" 
+                    encoding="UTF-8" 
+                    file="md_application_user.csv" 
+                    relativeToChangelogFile="true"
+                    schemaName="public" 
+                    separator="," 
+                    tableName="md_application_user" 
+                    usePreparedStatements="true"
+                    primaryKey="businesscomponent_shortname">
+    <column index="1" name="username" type="STRING"/>
+    <column index="2" name="email" type="STRING"/>
+    <column index="3" name="businesscomponent_shortname" type="STRING"/>
+    </loadUpdateData> 
+</changeSet>
+
+<changeSet author="dragos-constantin-stoica" id="sql file to init data" runAlways="true" runOnChange="true">
+    <sqlFile dbms="postgresql"
+       encoding="UTF-8"
+       path="setup.sql"
+       relativeToChangelogFile="true"
+       splitStatements="true"
+       stripComments="true"/>
+</changeSet>
+
 </databaseChangeLog>

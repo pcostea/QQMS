@@ -25,15 +25,24 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Startup message
-        run: echo Deployment v1.0 in PROD!
+        run: echo Deployment v2.0 in PROD!
 
-
-      - name: Liquibase update
+      - name: Liquibase create tables and stored procedures
         uses: liquibase/liquibase-github-action@v7
         with:
             operation: 'update'
             classpath: './'
-            changeLogFile: 'deploymentv1.0.postgresql.sql'
+            changeLogFile: './sql/release20.sql'
+            username: ${{ secrets.USERNAME }}
+            password: ${{ secrets.PASSWORD }}
+            url: ${{ secrets.URL }}
+
+      - name: Liquibase setup data
+        uses: liquibase/liquibase-github-action@v7
+        with:
+            operation: 'update'
+            classpath: './'
+            changeLogFile: './sql/loadData.xml'
             username: ${{ secrets.USERNAME }}
             password: ${{ secrets.PASSWORD }}
             url: ${{ secrets.URL }}
