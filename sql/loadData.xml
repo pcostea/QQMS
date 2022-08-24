@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+                    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"  
+                    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                    xmlns:pro="http://www.liquib.ase.org/xml/ns/pro"
+                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog-ext/dbchangelog-ext.xsd
+                    http://www.liquibase.org/xm1/ns/pro http://www.liquibase.org/xm1/ns/pro/liquibase-pro-latest.xsd">
+
+<preConditions onFail="HALT" onFailMessage="checkihng if the table exitsts ...">
+    <tableExists schemaName="public" tableName="md_business_component" />
+    <tableExists schemaName="public" tableName="md_product" />
+    <tableExists schemaName="public" tableName="md_risk_type" />
+    <tableExists schemaName="public" tableName="md_ercsa" />
+    <tableExists schemaName="public" tableName="md_euf" />
+
+</preConditions>
+
+<changeSet author="dragos-constantin-stoica" id="business component" runOnChange="true" runAlways="true">
+    <loadUpdateData catalogName="catalogue"
+                    commentLineStartsWith= "//" 
+                    encoding="UTF-8" 
+                    file="md_business_component.csv" 
+                    relativeToChangelogFile="true"
+                    schemaName="public" 
+                    separator="," 
+                    tableName="md_business_component" 
+                    usePreparedStatements="true"
+                    primaryKey="shortname">
+    <column index="1" name="component" type="STRING"/>
+    <column index="2" name="service" type="STRING"/>
+    <column index="3" name="shortname" type="STRING"/>
+    </loadUpdateData> 
+</changeSet>
+
+<changeSet author="dragos-constantin-stoica" id="product" runOnChange="true" runAlways="true">
+    <loadUpdateData catalogName="catalogue"
+                    commentLineStartsWith= "//" 
+                    encoding="UTF-8" 
+                    file="md_product.csv" 
+                    relativeToChangelogFile="true"
+                    schemaName="public" 
+                    separator="," 
+                    tableName="md_product" 
+                    usePreparedStatements="true"
+                    primaryKey="shortname">
+    <column index="1" name="name" type="STRING"/>
+    <column index="2" name="shortname" type="STRING"/>
+    <column index="3" name="book" type="STRING"/>
+    </loadUpdateData> 
+</changeSet>
+
+<changeSet author="dragos-constantin-stoica" id="risk type" runOnChange="true" runAlways="true">
+    <loadUpdateData catalogName="catalogue"
+                    commentLineStartsWith= "//" 
+                    encoding="UTF-8" 
+                    file="md_risk_type.csv" 
+                    relativeToChangelogFile="true"
+                    schemaName="public" 
+                    separator="," 
+                    tableName="md_risk_type" 
+                    usePreparedStatements="true"
+                    primaryKey="shortname">
+    <column index="1" name="name" type="STRING"/>
+    <column index="2" name="shortname" type="STRING"/>
+    </loadUpdateData> 
+</changeSet>
+
+<changeSet author="dragos-constantin-stoica" id="ercsa" runOnChange="true" runAlways="true">
+    <loadUpdateData catalogName="catalogue"
+                    commentLineStartsWith= "//" 
+                    encoding="UTF-8" 
+                    file="md_ercsa.csv" 
+                    relativeToChangelogFile="true"
+                    schemaName="public" 
+                    separator="," 
+                    tableName="md_ercsa" 
+                    usePreparedStatements="true"
+                    primaryKey="shortname">
+    <column index="1" name="type" type="STRING"/>
+    <column index="2" name="name" type="STRING"/>
+    <column index="3" name="shortname" type="STRING"/>
+    </loadUpdateData> 
+</changeSet>
+
+<changeSet author="dragos-constantin-stoica" id="euf" runOnChange="true" runAlways="true">
+    <loadUpdateData catalogName="catalogue"
+                    commentLineStartsWith= "//" 
+                    encoding="UTF-8" 
+                    file="md_euf.csv" 
+                    relativeToChangelogFile="true"
+                    schemaName="public" 
+                    separator="," 
+                    tableName="md_euf" 
+                    usePreparedStatements="true"
+                    primaryKey="product_shortname,risktype_shortname">
+    <column index="1" name="product_shortname" type="STRING"/>
+    <column index="2" name="risktype_shortname" type="STRING"/>
+    <column index="3" name="value" type="BIGINT"/>
+    </loadUpdateData> 
+</changeSet>
+
+<changeSet author="dragos-constantin-stoica" id="business component - product" runOnChange="true" runAlways="true">
+    <loadUpdateData catalogName="catalogue"
+                    commentLineStartsWith= "//" 
+                    encoding="UTF-8" 
+                    file="md_business_component_product.csv" 
+                    relativeToChangelogFile="true"
+                    schemaName="public" 
+                    separator="," 
+                    tableName="md_business_component_product" 
+                    usePreparedStatements="true"
+                    primaryKey="businesscomponent_shortname,product_shortname">
+    <column index="1" name="businesscomponent_shortname" type="STRING"/>
+    <column index="2" name="product_shortname" type="STRING"/>
+    </loadUpdateData> 
+</changeSet>
+
+<changeSet author="dragos-constantin-stoica" id="business component - ercsa" runOnChange="true" runAlways="true">
+    <loadUpdateData catalogName="catalogue"
+                    commentLineStartsWith= "//" 
+                    encoding="UTF-8" 
+                    file="md_business_component_ercsa.csv" 
+                    relativeToChangelogFile="true"
+                    schemaName="public" 
+                    separator="," 
+                    tableName="md_business_component_ercsa" 
+                    usePreparedStatements="true"
+                    primaryKey="businesscomponent_shortname,ercsa_shortname">
+    <column index="1" name="businesscomponent_shortname" type="STRING"/>
+    <column index="2" name="ercsa_shortname" type="STRING"/>
+    <column index="3" name="weight" type="BIGINT"/>
+    </loadUpdateData> 
+</changeSet>
+
+<changeSet author="dragos-constantin-stoica" id="application user - business component" runOnChange="true" runAlways="true">
+    <loadUpdateData catalogName="catalogue"
+                    commentLineStartsWith= "//" 
+                    encoding="UTF-8" 
+                    file="md_application_user.csv" 
+                    relativeToChangelogFile="true"
+                    schemaName="public" 
+                    separator="," 
+                    tableName="md_application_user" 
+                    usePreparedStatements="true"
+                    primaryKey="businesscomponent_shortname">
+    <column index="1" name="username" type="STRING"/>
+    <column index="2" name="email" type="STRING"/>
+    <column index="3" name="businesscomponent_shortname" type="STRING"/>
+    </loadUpdateData> 
+</changeSet>
+
+<changeSet author="dragos-constantin-stoica" id="sql file to init data" runAlways="true" runOnChange="true">
+    <sqlFile dbms="postgresql"
+       encoding="UTF-8"
+       path="setup.sql"
+       relativeToChangelogFile="true"
+       splitStatements="true"
+       stripComments="true"/>
+</changeSet>
+
+</databaseChangeLog>
