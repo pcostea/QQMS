@@ -18,6 +18,14 @@ async function postData(url = '', data = {}) {
 }
 
 
+let loginapp = new Vue({
+    el:"#app",
+    data: {
+        user_email: '',
+        user_password:''
+    }
+})
+
 function doLogin() {
     //Get user email and password
     let user_email = document.getElementById('user_email').value,

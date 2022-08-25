@@ -1,5 +1,3 @@
-feather.replace({ 'aria-hidden': 'true' })
-
 doCheckSession()
 
 // Example POST method implementation:
@@ -20,6 +18,27 @@ async function postData(url = '', data = {}) {
     });
     return response; // response object that may contain redirect
 }
+
+
+window.app = new Vue({
+    el:"#app",
+    data: {
+        theComponent: 'dashboard'
+    },
+    methods: {
+        logout() {
+            doLogout();
+        },
+        showDashboard(){
+            this.theComponent = 'dashboard';
+            console.log("show dashboard");
+        },
+        showTransactions(){
+            this.theComponent = 'transactions';
+            console.log("show transactions");
+        }
+    }
+});
 
 
 function doLogout() {
