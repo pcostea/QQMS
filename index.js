@@ -66,7 +66,7 @@ function isAuthenticated(req, res, next) {
 
 app.post("/checksession", function(req, res){
     if(req.session.user){
-        res.json({status:"OK"})
+        res.json({status:"OK", user_data:req.session.user })
     }else{
         res.redirect('/index.html')
     }
@@ -105,16 +105,16 @@ app.post('/login', async function (req, res, next) {
     const client = await pool.connect()
     try {
         //pino.logger.info(req.body.password)
-        let result = await client.query(`SELECT * FROM getuser('${req.body.email}', '${req.body.password}') AS T1;`)
+        let result = await client.query(`SELECT * FROM getuser('${req.body.email}', '${req.body.password}') AS result;`)
         //pino.logger.info(result)
-        if (result.rows[0].email == req.body.email) {
+        if (result.rows[0].result && result.rows[0].result[0].username == req.body.email) {
             await client.query(`CALL setuserlogin('${req.body.email}')`)
 
             req.session.regenerate(function (err) {
                 if (err) next(err)
 
                 // store user information in session, typically a user id
-                req.session.user = result.rows[0].uid
+                req.session.user = result.rows[0].result
 
                 // save the session before redirection to ensure page
                 // load does not happen before session is saved
@@ -124,7 +124,7 @@ app.post('/login', async function (req, res, next) {
                     //res.redirect('main.html')
                 })
                 
-                res.json({ status: 'OK - user authenticated and session saved' });
+                res.json({ status: 'OK - user authenticated and session saved', user_data: req.session.user });
             })
 
 

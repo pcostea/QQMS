@@ -346,6 +346,7 @@ create table md_application_user (
 /**************************
 
   create stored procedures
+  and functions
 
 ***************************/
 
@@ -357,11 +358,40 @@ DROP FUNCTION IF EXISTS getuser;
 create or replace function getuser(
    user_email varchar(255),
    user_password varchar(255) 
-) RETURNS application_user
+) RETURNS json
 language sql
 as $$
-    SELECT * FROM application_user WHERE email = user_email AND password = user_password;
-$$;
+WITH
+    app_user AS (
+    SELECT application_user.uid, email, application_user_id, business_component_id
+    FROM application_user 
+    INNER JOIN user_to_business_component_mapping as nton on nton.application_user_id = application_user.uid 
+        WHERE email = user_email AND password = user_password
+    ),
+    bc AS (
+    SELECT 
+        app_user.email AS username,
+        shortname AS business_component,     
+        (
+            select array(
+                select ercsa.shortname
+                from business_component_ercsa
+                inner join app_user on app_user.business_component_id = business_component_ercsa.business_component_id
+                inner join ercsa on business_component_ercsa.ercsa_id = ercsa.uid
+                group by ercsa.shortname
+            )
+        ) as ercsa,
+        ( select corporation.name 
+        from corporation
+        inner join business_component on corporation.uid = business_component.corporation_id
+        group by corporation.name
+        ) as corporation
+    FROM business_component bc
+    JOIN app_user on app_user.business_component_id = bc.uid
+    GROUP BY app_user.email, shortname
+    )
+SELECT json_agg(bc)
+FROM bc;$$;
 --rollback DROP FUNCTION getuser;
 --use this function in a stamement like SELECT * FROM getuser('email_address', 'user_hash_password');
 

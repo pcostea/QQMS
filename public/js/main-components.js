@@ -2,7 +2,7 @@ Vue.component('dashboard',
     {
         data: function () {
             return {
-                corporation: "ACME",
+                corporation: window.user_data?window.user_data[0].corporation:'The Very Big Corporation of America',
                 products: [
                     { name: 'FX Forwards', short_name: 'FXFWDS', book: 'Trading' },
                     { name: 'Commercial Loans (Secured)', short_name: 'COMLNS', book: 'Banking' },
