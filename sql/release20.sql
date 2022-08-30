@@ -226,6 +226,7 @@ create table ercsa_response (
     business_component_ercsa_id integer not null,
     application_user_id integer not null,
     response jsonb not null,
+    status varchar(60) not null,
     ts timestamp not null,
     constraint business_component_ercsa_fkey
         foreign key(business_component_ercsa_id)
@@ -346,6 +347,7 @@ create table md_application_user (
 /**************************
 
   create stored procedures
+  and functions
 
 ***************************/
 
@@ -357,11 +359,40 @@ DROP FUNCTION IF EXISTS getuser;
 create or replace function getuser(
    user_email varchar(255),
    user_password varchar(255) 
-) RETURNS application_user
+) RETURNS json
 language sql
 as $$
-    SELECT * FROM application_user WHERE email = user_email AND password = user_password;
-$$;
+WITH
+    app_user AS (
+    SELECT application_user.uid, email, application_user_id, business_component_id
+    FROM application_user 
+    INNER JOIN user_to_business_component_mapping as nton on nton.application_user_id = application_user.uid 
+        WHERE email = user_email AND password = user_password
+    ),
+    bc AS (
+    SELECT 
+        app_user.email AS username,
+        shortname AS business_component,     
+        (
+            select array(
+                select ercsa.shortname
+                from business_component_ercsa
+                inner join app_user on app_user.business_component_id = business_component_ercsa.business_component_id
+                inner join ercsa on business_component_ercsa.ercsa_id = ercsa.uid
+                group by ercsa.shortname
+            )
+        ) as ercsa,
+        ( select corporation.name 
+        from corporation
+        inner join business_component on corporation.uid = business_component.corporation_id
+        group by corporation.name
+        ) as corporation
+    FROM business_component bc
+    JOIN app_user on app_user.business_component_id = bc.uid
+    GROUP BY app_user.email, shortname
+    )
+SELECT json_agg(bc)
+FROM bc;$$;
 --rollback DROP FUNCTION getuser;
 --use this function in a stamement like SELECT * FROM getuser('email_address', 'user_hash_password');
 
@@ -376,3 +407,26 @@ begin
     UPDATE application_user SET last_login = NOW() WHERE email = user_email;
 end;$$
 --rollback DROP PROCEDURE setuserlogin;
+
+
+--changeset dragos-constantin-stoica:67100 runAlways:true runOnChange:true labels:set-transactionvalue context:issue67
+DROP PROCEDURE IF EXISTS settransactionvalue;
+
+--changeset dragos-constantin-stoica:67101 runAlways:true runOnChange:true endDelimiter:"" labels:set-transactionvalue context:issue67
+create or replace procedure settransactionvalue(
+   iso_date varchar(10),
+   product_shortname varchar(10),
+   input_value money,
+   input_currency varchar(3),
+   corporation_name varchar(255)
+)
+language plpgsql
+as $$
+begin
+    INSERT INTO transaction_value(product_id, value, currency, ts)
+    VALUES ( (select product.uid from product 
+        join (SELECT uid from corporation where name=corporation_name) as inc on product.corporation_id = inc.uid
+        where shortname = product_shortname),
+    input_value, input_currency, TO_TIMESTAMP (iso_date, 'YYYY-MM-DD'));
+end;$$
+--rollback DROP PROCEDURE settransactionvalue;

@@ -18,6 +18,14 @@ async function postData(url = '', data = {}) {
 }
 
 
+let loginapp = new Vue({
+    el:"#app",
+    data: {
+        user_email: '',
+        user_password:''
+    }
+})
+
 function doLogin() {
     //Get user email and password
     let user_email = document.getElementById('user_email').value,
@@ -27,12 +35,14 @@ function doLogin() {
     //Send data to server 
     postData('/login', { email: user_email, password: user_password })
         .then(data => {
-            console.log(data);
+            //console.log(data);
             var toastLiveExample = document.getElementById('liveToast')
             var toast = new bootstrap.Toast(toastLiveExample)
             document.getElementById('msgArea').innerHTML =`The server says: ${data.status}.`
             toast.show()
-            if (data.status.indexOf('OK') != -1) window.location.assign('/dashboard')
+            if (data.status.indexOf('OK') != -1) {
+                window.location.assign('/dashboard');
+            }
         })
         .catch((error) => {
             console.error(error);
