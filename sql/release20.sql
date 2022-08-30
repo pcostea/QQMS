@@ -226,6 +226,7 @@ create table ercsa_response (
     business_component_ercsa_id integer not null,
     application_user_id integer not null,
     response jsonb not null,
+    status varchar(60) not null,
     ts timestamp not null,
     constraint business_component_ercsa_fkey
         foreign key(business_component_ercsa_id)
@@ -406,3 +407,26 @@ begin
     UPDATE application_user SET last_login = NOW() WHERE email = user_email;
 end;$$
 --rollback DROP PROCEDURE setuserlogin;
+
+
+--changeset dragos-constantin-stoica:67100 runAlways:true runOnChange:true labels:set-transactionvalue context:issue67
+DROP PROCEDURE IF EXISTS settransactionvalue;
+
+--changeset dragos-constantin-stoica:67101 runAlways:true runOnChange:true endDelimiter:"" labels:set-transactionvalue context:issue67
+create or replace procedure settransactionvalue(
+   iso_date varchar(10),
+   product_shortname varchar(10),
+   input_value money,
+   input_currency varchar(3),
+   corporation_name varchar(255)
+)
+language plpgsql
+as $$
+begin
+    INSERT INTO transaction_value(product_id, value, currency, ts)
+    VALUES ( (select product.uid from product 
+        join (SELECT uid from corporation where name=corporation_name) as inc on product.corporation_id = inc.uid
+        where shortname = product_shortname),
+    input_value, input_currency, TO_TIMESTAMP (iso_date, 'YYYY-MM-DD'));
+end;$$
+--rollback DROP PROCEDURE settransactionvalue;

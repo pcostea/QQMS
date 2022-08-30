@@ -2,7 +2,7 @@ Vue.component('dashboard',
     {
         data: function () {
             return {
-                corporation: window.user_data?window.user_data[0].corporation:'The Very Big Corporation of America',
+                corporation: window.user_data ? window.user_data[0].corporation : 'The Very Big Corporation of America',
                 products: [
                     { name: 'FX Forwards', short_name: 'FXFWDS', book: 'Trading' },
                     { name: 'Commercial Loans (Secured)', short_name: 'COMLNS', book: 'Banking' },
@@ -47,49 +47,49 @@ Vue.component('dashboard',
                     { type: 'Technical', name: 'Environment Protection', short_name: 'ENVMNT' },
                 ],
                 businesscomponents: [
-                    { component: 'Transaction Processing (Operations)', service: 'Product and Service Pricing', shotr_name: 'TPOPSP' },
-                    { component: 'Transaction Processing (Operations)', service: 'Deal Structuring', shotr_name: 'TPODES' },
-                    { component: 'Transaction Processing (Operations)', service: 'Pre-Trade/Deal Validation', shotr_name: 'TPPTDV' },
-                    { component: 'Transaction Processing (Operations)', service: 'Trade/Deal Execution and Capture', shotr_name: 'TPTDEC' },
-                    { component: 'Transaction Processing (Operations)', service: 'Transaction Origination and Capture', shotr_name: 'TPOTOC' },
-                    { component: 'Transaction Processing (Operations)', service: 'Cash Management', shotr_name: 'TPOCAM' },
-                    { component: 'Transaction Processing (Operations)', service: 'Trade/Deal Confirmation and Matching', shotr_name: 'TPTDCM' },
-                    { component: 'Transaction Processing (Operations)', service: 'Position Control and Amendments', shotr_name: 'TPOPCA' },
-                    { component: 'Transaction Processing (Operations)', service: 'Credit Limit Monitoring', shotr_name: 'TPOCLM' },
-                    { component: 'Transaction Processing (Operations)', service: 'Trade/Deal Limit Monitoring', shotr_name: 'TPTDLM' },
-                    { component: 'Transaction Processing (Operations)', service: 'Trade/Deal Settlements', shotr_name: 'TPOTDS' },
-                    { component: 'Transaction Processing (Operations)', service: 'Payments', shotr_name: 'TPOPAY' },
-                    { component: 'Transaction Processing (Operations)', service: 'Collateral Management', shotr_name: 'TPOCOM' },
-                    { component: 'Transaction Processing (Operations)', service: 'Custody/Safekeeping', shotr_name: 'TPOCUS' },
-                    { component: 'Transaction Processing (Operations)', service: 'Loans Processing', shotr_name: 'TPOLOP' },
-                    { component: 'Transaction Processing (Operations)', service: 'Treasury Processing', shotr_name: 'TPOTRP' },
-                    { component: 'Transaction Processing (Operations)', service: 'FX Processing', shotr_name: 'TPOFXP' },
-                    { component: 'Transaction Processing (Operations)', service: 'Securities Processing', shotr_name: 'TPOSEP' },
-                    { component: 'Transaction Processing (Operations)', service: 'Derivatives Processing', shotr_name: 'TPODEP' },
-                    { component: 'Transaction Processing (Operations)', service: 'Nostro Reconcilement', shotr_name: 'TPONOR' },
-                    { component: 'Transaction Processing (Operations)', service: 'Trading Account Reconciliations', shotr_name: 'TPOTAR' },
-                    { component: 'Transaction Processing (Operations)', service: 'G/L Proofs and Substantiation', shotr_name: 'TPGLPS' },
-                    { component: 'Trading', service: 'FX Trading', shotr_name: 'TRAFXT' },
-                    { component: 'Trading', service: 'Futures Trading', shotr_name: 'TRAFUT' },
-                    { component: 'Trading', service: 'Asset Backed Securities Trading', shotr_name: 'TRABST' },
-                    { component: 'Trading', service: 'Equities Trading', shotr_name: 'TRAEQT' },
-                    { component: 'Trading', service: 'Bond Trading', shotr_name: 'TRABOT' },
-                    { component: 'Core Systems', service: 'Client and Counterparty Data', shotr_name: 'COSCCD' },
-                    { component: 'Core Systems', service: 'Market Data', shotr_name: 'COSMAD' },
-                    { component: 'Core Systems', service: 'Products and Instruments Data', shotr_name: 'COSPID' },
-                    { component: 'Core Systems', service: 'Trading System', shotr_name: 'COSTRS' },
-                    { component: 'Core Systems', service: 'Global Loan System', shotr_name: 'COSGLO' },
-                    { component: 'Core Systems', service: 'Funds Transfer System', shotr_name: 'COSFTS' },
-                    { component: 'Core Systems', service: 'Global Nostros System', shotr_name: 'COSGNS' },
-                    { component: 'Core Systems', service: 'Global Ledger System', shotr_name: 'COSGLS' },
-                    { component: 'Core Systems', service: 'Funding and Liquidity System', shotr_name: 'COSFLS' },
-                    { component: 'Reference Data Management', service: 'Client and Counterparty Data', shotr_name: 'RDMCCD' },
-                    { component: 'Reference Data Management', service: 'Market Data', shotr_name: 'RDMMAD' },
-                    { component: 'Reference Data Management', service: 'Products and Instruments Data', shotr_name: 'RDMPID' },
-                    { component: 'All Other', service: 'Credit (Lending)', shotr_name: 'ALOCRL' },
-                    { component: 'All Other', service: 'Treasury (Funding)', shotr_name: 'ALOTRF' },
-                    { component: 'All Other', service: 'Treasury (Interest Rate)', shotr_name: 'ALOTIR' },
-                    { component: 'All Other', service: 'Sales (Selling)', shotr_name: 'ALOSAS' },
+                    { component: 'Transaction Processing (Operations)', service: 'Product and Service Pricing', short_name: 'TPOPSP' },
+                    { component: 'Transaction Processing (Operations)', service: 'Deal Structuring', short_name: 'TPODES' },
+                    { component: 'Transaction Processing (Operations)', service: 'Pre-Trade/Deal Validation', short_name: 'TPPTDV' },
+                    { component: 'Transaction Processing (Operations)', service: 'Trade/Deal Execution and Capture', short_name: 'TPTDEC' },
+                    { component: 'Transaction Processing (Operations)', service: 'Transaction Origination and Capture', short_name: 'TPOTOC' },
+                    { component: 'Transaction Processing (Operations)', service: 'Cash Management', short_name: 'TPOCAM' },
+                    { component: 'Transaction Processing (Operations)', service: 'Trade/Deal Confirmation and Matching', short_name: 'TPTDCM' },
+                    { component: 'Transaction Processing (Operations)', service: 'Position Control and Amendments', short_name: 'TPOPCA' },
+                    { component: 'Transaction Processing (Operations)', service: 'Credit Limit Monitoring', short_name: 'TPOCLM' },
+                    { component: 'Transaction Processing (Operations)', service: 'Trade/Deal Limit Monitoring', short_name: 'TPTDLM' },
+                    { component: 'Transaction Processing (Operations)', service: 'Trade/Deal Settlements', short_name: 'TPOTDS' },
+                    { component: 'Transaction Processing (Operations)', service: 'Payments', short_name: 'TPOPAY' },
+                    { component: 'Transaction Processing (Operations)', service: 'Collateral Management', short_name: 'TPOCOM' },
+                    { component: 'Transaction Processing (Operations)', service: 'Custody/Safekeeping', short_name: 'TPOCUS' },
+                    { component: 'Transaction Processing (Operations)', service: 'Loans Processing', short_name: 'TPOLOP' },
+                    { component: 'Transaction Processing (Operations)', service: 'Treasury Processing', short_name: 'TPOTRP' },
+                    { component: 'Transaction Processing (Operations)', service: 'FX Processing', short_name: 'TPOFXP' },
+                    { component: 'Transaction Processing (Operations)', service: 'Securities Processing', short_name: 'TPOSEP' },
+                    { component: 'Transaction Processing (Operations)', service: 'Derivatives Processing', short_name: 'TPODEP' },
+                    { component: 'Transaction Processing (Operations)', service: 'Nostro Reconcilement', short_name: 'TPONOR' },
+                    { component: 'Transaction Processing (Operations)', service: 'Trading Account Reconciliations', short_name: 'TPOTAR' },
+                    { component: 'Transaction Processing (Operations)', service: 'G/L Proofs and Substantiation', short_name: 'TPGLPS' },
+                    { component: 'Trading', service: 'FX Trading', short_name: 'TRAFXT' },
+                    { component: 'Trading', service: 'Futures Trading', short_name: 'TRAFUT' },
+                    { component: 'Trading', service: 'Asset Backed Securities Trading', short_name: 'TRABST' },
+                    { component: 'Trading', service: 'Equities Trading', short_name: 'TRAEQT' },
+                    { component: 'Trading', service: 'Bond Trading', short_name: 'TRABOT' },
+                    { component: 'Core Systems', service: 'Client and Counterparty Data', short_name: 'COSCCD' },
+                    { component: 'Core Systems', service: 'Market Data', short_name: 'COSMAD' },
+                    { component: 'Core Systems', service: 'Products and Instruments Data', short_name: 'COSPID' },
+                    { component: 'Core Systems', service: 'Trading System', short_name: 'COSTRS' },
+                    { component: 'Core Systems', service: 'Global Loan System', short_name: 'COSGLO' },
+                    { component: 'Core Systems', service: 'Funds Transfer System', short_name: 'COSFTS' },
+                    { component: 'Core Systems', service: 'Global Nostros System', short_name: 'COSGNS' },
+                    { component: 'Core Systems', service: 'Global Ledger System', short_name: 'COSGLS' },
+                    { component: 'Core Systems', service: 'Funding and Liquidity System', short_name: 'COSFLS' },
+                    { component: 'Reference Data Management', service: 'Client and Counterparty Data', short_name: 'RDMCCD' },
+                    { component: 'Reference Data Management', service: 'Market Data', short_name: 'RDMMAD' },
+                    { component: 'Reference Data Management', service: 'Products and Instruments Data', short_name: 'RDMPID' },
+                    { component: 'All Other', service: 'Credit (Lending)', short_name: 'ALOCRL' },
+                    { component: 'All Other', service: 'Treasury (Funding)', short_name: 'ALOTRF' },
+                    { component: 'All Other', service: 'Treasury (Interest Rate)', short_name: 'ALOTIR' },
+                    { component: 'All Other', service: 'Sales (Selling)', short_name: 'ALOSAS' },
                 ],
                 euf: [
                     { name: 'FX Forwards', short_name: 'FXFWDS', book: 'Trading', PROC: 12, TRAD: 4, LEND: 4, SELL: 6, FUND: 2, INTR: 0 },
@@ -157,9 +157,11 @@ Vue.component('dashboard',
                 <b-card title="Products" class="my-2">
                     <b-table striped hover :items="products"></b-table>
                 </b-card>
+
                 <b-card title="Risk Types" class="my-2">
                 <b-table striped hover :items="risktypes"></b-table>
                 </b-card>
+                
                 <b-card title="EUF" sub-title="Products to Risk Types" class="my-2">
                 <b-table striped hover :items="euf">
                 <template #thead-top="data">
@@ -170,9 +172,11 @@ Vue.component('dashboard',
                 </template>
                 </b-table>
                 </b-card>
+
                 <b-card title="ERCSA Categories" class="my-2">
                 <b-table striped hover :items="ercsa"></b-table>
                 </b-card>
+
                 <b-card title="Business Components" class="my-2">
                 <b-table striped hover :items="businesscomponents"></b-table>
                 </b-card>
@@ -196,24 +200,150 @@ Vue.component('transactions',
     {
         data: function () {
             return {
-                count: 0
+                isBusy: true,
+                form: {
+                    date: (new Date(Date.now()).toISOString().substring(0, 10)),
+                    product: 'FXFWDS',
+                    value: 0,
+                    currency: 'USD'
+                },
+                products: [
+                    { value: 'FXFWDS', text: 'FX Forwards' },
+                    { value: 'COMLNS', text: 'Commercial Loans (Secured)' },
+                    { value: 'FXDTDS', text: 'Fixed Term Deposits' },
+                    { value: 'REPOS', text: 'Repos' },
+                    { value: 'XCSWPS', text: 'Cross Currency Swaps' },
+                    { value: 'FUTRES', text: 'Futures' },
+                    { value: 'CDOS', text: 'Collateralized Debt Obligations (CDOs)' },
+                    { value: 'EQTIES', text: 'Equities' },
+                    { value: 'FXDINC', text: 'Fixed Income' },
+                    { value: 'PMTORD', text: 'Payment Orders' },
+                ],
+                currencies: [
+                    { value: 'USD', text: 'USD' }
+                ],
+                transactions: [
+                    { date: 'yyyy-mm-dd', value: 12345678901234567890, currency: 'USD' }
+                ]
+            }
+        },
+        methods: {
+            refreshTable(event) {
+                //fetch data for transactions and set this.transsactions in order to trigger refresh
+                getData('/transactions')
+                    .then(data => {
+                        this.isBusy = false;
+                        this.transactions = data.result;
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    })
+            },
+            onSubmit(event) {
+                event.preventDefault();
+                //save data and refresh table
+                let payload = this.form;
+                payload.corporation = window.user_data[0].corporation;
+                console.log(JSON.stringify(payload));
+                postData('/transactions', { payload: payload })
+                    .then(data => {
+                        //console.log(JSON.stringify(data));
+                        getData('/transactions')
+                            .then(data => {
+                                this.isBusy = false;
+                                this.transactions = data.result;
+                            })
+                            .catch((error) => {
+                                console.log(error);
+                            })
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    })
             }
         },
         template:
             `
     <div>
-    <b-card title="Transactions" sub-title="Card subtitle">
-        <b-card-text>
-        Some quick example text to build on the <em>card title</em> and make up the bulk of the card's
-        content.
-        </b-card-text>
+    <b-card title="Transactions" sub-title="Historical transaction values" class="my-2">
+        <b-table striped hover :items="transactions" :busy="isBusy">
+        <template #table-busy>
+            <div class="text-center text-danger my-2">
+            <b-spinner class="align-middle"></b-spinner>
+            <strong>Loading...</strong>
+            </div>
+        </template>
+        </b-table>
+        <b-button @click="refreshTable($event)" variant="primary">Refresh data</b-button>
+    </b-card>
 
-        <b-card-text>A second paragraph of text in the card.</b-card-text>
+    <b-card title="Register NEW Transaction" class="my-2">
 
-        <a href="#" class="card-link">Card link</a>
-        <b-link href="#" class="card-link">Another link</b-link>
+    <b-form @submit="onSubmit">
+        <b-form-group id="group-transactionDate" label="Date:" label-for="transactionDate">
+            <b-form-input id="transactionDate" type="date" v-model="form.date" required></b-form-input>
+        </b-form-group>
+
+        <b-form-group id="group-transactionProduct" label="Product:" label-for="transactionProduct">
+            <b-form-select id="transactionProduct" v-model="form.product" :options="products" required></b-form-select>
+        </b-form-group>
+
+        <b-form-group id="group-transactionValue" label="Value:" label-for="transactionValue">
+            <b-form-input id="transactionValue" type="number" v-model="form.value" placeholder="0" required></b-form-input>
+        </b-form-group>
+
+        <b-form-group id="group-transactionCurrency" label="Currency:" label-for="transactionCurrency">
+            <b-form-select id="transactionCurrency" v-model="form.currency" :options="currencies" required></b-form-select>
+        </b-form-group>  
+        
+        <b-button type="submit" variant="primary">Submit</b-button>
+    </b-form>
     </b-card>
     </div>
     `
+    }
+);
+
+Vue.component('ercsa',
+    {
+        data: function(){
+            counter: 0
+        },
+        template: `
+        <div>
+        <b-card title="Questionnaire" sub-title="Some stuff extra">
+            <b-card-text>
+            List of business components for this user with their associated ERCSA categories
+            </b-card-text>
+
+            <b-card-text>
+            Create new questionnaire or continue the last saved one. Only one questionnaire per quarter is allowed. Previous periods should be closed automatically.
+            </b-card-text>
+        </b-card>
+        </div>
+        `
+    }
+);
+
+
+Vue.component('reports',
+    {
+        data: function(){
+            counter: 0
+        },
+        template: `
+        <div>
+        <b-card title="Reports" sub-title="Some stuff extra">
+            <b-card-text>
+            Report with IR caluculation based on Transaction values, EUF and VBW
+            </b-card-text>
+
+            <b-card-text>
+            Report with overall ERCSA answers at Corporation level.
+            </b-card-text>
+
+        </b-card>
+        </div>
+        `
     }
 );

@@ -28,46 +28,6 @@
     <!-- Load the following for BootstrapVueIcons support -->
     <script src="https://unpkg.com/bootstrap-vue@2.22.0/dist/bootstrap-vue-icons.min.js"></script>
 
-    <script>
-        doCheckSession()
-
-        // Example POST method implementation:
-        async function postData(url = '', data = {}) {
-            // Default options are marked with *
-            const response = await fetch(url, {
-                method: 'POST', // *GET, POST, PUT, DELETE, etc.
-                mode: 'cors', // no-cors, *cors, same-origin
-                cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-                credentials: 'same-origin', // include, *same-origin, omit
-                headers: {
-                    'Content-Type': 'application/json'
-                    // 'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                redirect: 'follow', // manual, *follow, error
-                referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-                body: JSON.stringify(data) // body data type must match "Content-Type" header
-            });
-            return response; // response object that may contain redirect
-        }
-
-        function doCheckSession() {
-            postData('/checksession')
-                .then(result => {
-                    if (result.redirected) {
-                        window.location.href = result.url;
-                    } else {
-                        result.json().then(data => {
-                            window.user_data = data.user_data;
-                            createVueApp()
-                        });
-                    }
-                })
-                .catch((error) => {
-                    console.log(error);
-                })
-        }
-    </script>
-
 </head>
 
 <body>
@@ -87,6 +47,8 @@
                                 <b-navbar-nav>
                                     <b-nav-item @click="showDashboard()">Dashboard</b-nav-item>
                                     <b-nav-item @click="showTransactions()">Transactions</b-nav-item>
+                                    <b-nav-item @click="showERCSA()">E-RCSA</b-nav-item>
+                                    <b-nav-item @click="showReports()">Reports</b-nav-item>
                                 </b-navbar-nav>
 
                                 <b-navbar-nav class="ml-auto">

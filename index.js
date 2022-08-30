@@ -64,18 +64,64 @@ function isAuthenticated(req, res, next) {
  * Handle endpoints
  */
 
-app.post("/checksession", function(req, res){
-    if(req.session.user){
-        res.json({status:"OK", user_data:req.session.user })
-    }else{
+app.post("/checksession", function (req, res) {
+    if (req.session.user) {
+        res.json({ status: "OK", user_data: req.session.user })
+    } else {
         res.redirect('/index.html')
     }
 })
 
-app.get("/dashboard", isAuthenticated, function(req, res){
-        res.redirect('/main.html')
+app.get("/dashboard", isAuthenticated, function (req, res) {
+    res.redirect('/main.html')
 })
-app.get("/dashboard", function(req, res){
+app.get("/dashboard", function (req, res) {
+    res.redirect('/index.html')
+})
+
+app.post("/transactions", isAuthenticated, async function (req, res, next) {
+    pino.logger.info(req.body.payload)
+
+    const client = await pool.connect()
+    try {
+        //pino.logger.info(req.body.password)
+        let result = await client.query(`CALL settransactionvalue('${req.body.payload.date}', '${req.body.payload.product}', '${req.body.payload.value}', '${req.body.payload.currency}', '${req.body.payload.corporation}');`)
+        //pino.logger.info(result)
+        res.json({ status: 'OK - Transaction succesfuly registered'});
+
+    } catch (err) {
+        pino.logger.error(err);
+        res.json({ status: 'Transaction value error' });
+    } finally {
+        // Make sure to release the client before any error handling,
+        // just in case the error handling itself throws an error.
+        client.release()
+    }
+})
+
+app.get("/transactions", isAuthenticated, async function (req, res, next) {
+    const client = await pool.connect()
+    try {
+        //pino.logger.info(req.body.password)
+        let result = await client.query(`select TO_CHAR(transaction_value.ts::date, 'yyyy-mm-dd') as register_date, prd.name as product_short_name, value, currency from transaction_value
+        join (select product.uid, product.name from product
+              join (select uid from corporation where corporation.name= '${req.session.user[0].corporation}') as corp on corporation_id = corp.uid 
+             ) as prd on product_id = prd.uid
+        ORDER BY transaction_value.ts DESC;`)
+        //pino.logger.info(result)
+
+        res.json({ status: 'OK - Results of histrical Transaction', result: result.rows});
+
+    } catch (err) {
+        pino.logger.error(err);
+        res.json({ status: 'Transaction get history error' });
+    } finally {
+        // Make sure to release the client before any error handling,
+        // just in case the error handling itself throws an error.
+        client.release()
+    } 
+})
+app.get("/transactions", function (req, res) {
     res.redirect('/index.html')
 })
 
@@ -90,12 +136,12 @@ app.post('/logout', function (req, res, next) {
         if (err) next(err)
         // regenerate the session, which is good practice to help
         // guard against forms of session fixation
-        
+
         req.session.regenerate(function (err) {
             if (err) next(err)
             res.redirect('/')
         })
-        
+
     })
 })
 
@@ -118,12 +164,12 @@ app.post('/login', async function (req, res, next) {
 
                 // save the session before redirection to ensure page
                 // load does not happen before session is saved
-                
+
                 req.session.save(function (err) {
                     if (err) return next(err)
                     //res.redirect('main.html')
                 })
-                
+
                 res.json({ status: 'OK - user authenticated and session saved', user_data: req.session.user });
             })
 
