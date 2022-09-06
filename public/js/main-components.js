@@ -198,9 +198,10 @@ Vue.component('dashboard',
 
 Vue.component('transactions',
     {
+        props: ['server_transactions'],
         data: function () {
             return {
-                isBusy: true,
+                isBusy: false,
                 form: {
                     date: (new Date(Date.now()).toISOString().substring(0, 10)),
                     product: 'FXFWDS',
@@ -222,9 +223,7 @@ Vue.component('transactions',
                 currencies: [
                     { value: 'USD', text: 'USD' }
                 ],
-                transactions: [
-                    { date: 'yyyy-mm-dd', value: 12345678901234567890, currency: 'USD' }
-                ]
+                transactions: this.server_transactions
             }
         },
         methods: {
@@ -306,19 +305,33 @@ Vue.component('transactions',
 
 Vue.component('ercsa',
     {
-        data: function(){
-            counter: 0
+        data: function () {
+            return {
+                corporation: window.user_data ? window.user_data[0].corporation : 'The Very Big Corporation of America',
+                user: window.user_data[0].username,
+                bcercsa: getBusinessComponentERCSA()
+            }
         },
         template: `
         <div>
-        <b-card title="Questionnaire" sub-title="Some stuff extra">
+        <b-card title="User profile" class="my-2">
             <b-card-text>
-            List of business components for this user with their associated ERCSA categories
+            <b>Corporation: {{corporation}}</b>
             </b-card-text>
 
             <b-card-text>
-            Create new questionnaire or continue the last saved one. Only one questionnaire per quarter is allowed. Previous periods should be closed automatically.
+            List of business components for {{user}} with associated ERCSA categories
             </b-card-text>
+
+            <b-table :items="bcercsa"></b-table>
+
+            
+        </b-card>
+
+        <b-card title="ERCSA Questionnaire" class="my-2">
+        <b-card-text>
+        Create new questionnaire or continue the last saved one. Only one questionnaire per quarter is allowed. Previous periods should be closed automatically.
+        </b-card-text>
         </b-card>
         </div>
         `
@@ -328,7 +341,7 @@ Vue.component('ercsa',
 
 Vue.component('reports',
     {
-        data: function(){
+        data: function () {
             counter: 0
         },
         template: `

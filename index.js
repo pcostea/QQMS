@@ -87,7 +87,7 @@ app.post("/transactions", isAuthenticated, async function (req, res, next) {
         //pino.logger.info(req.body.password)
         let result = await client.query(`CALL settransactionvalue('${req.body.payload.date}', '${req.body.payload.product}', '${req.body.payload.value}', '${req.body.payload.currency}', '${req.body.payload.corporation}');`)
         //pino.logger.info(result)
-        res.json({ status: 'OK - Transaction succesfuly registered'});
+        res.json({ status: 'OK - Transaction succesfuly registered' });
 
     } catch (err) {
         pino.logger.error(err);
@@ -110,7 +110,7 @@ app.get("/transactions", isAuthenticated, async function (req, res, next) {
         ORDER BY transaction_value.ts DESC;`)
         //pino.logger.info(result)
 
-        res.json({ status: 'OK - Results of histrical Transaction', result: result.rows});
+        res.json({ status: 'OK - Results of histrical Transaction', result: result.rows });
 
     } catch (err) {
         pino.logger.error(err);
@@ -119,9 +119,33 @@ app.get("/transactions", isAuthenticated, async function (req, res, next) {
         // Make sure to release the client before any error handling,
         // just in case the error handling itself throws an error.
         client.release()
-    } 
+    }
 })
 app.get("/transactions", function (req, res) {
+    res.redirect('/index.html')
+})
+
+app.get("/md", isAuthenticated, async function (req, res, next) {
+    const client = await pool.connect()
+    try {
+        let result = await client.query(`
+        with
+        prd as
+        (select json_agg(json_build_object('name', name, 'shortname', shortname, 'book', book)) as p from md_product),
+        bc as
+        (select json_agg(json_build_object('component', component, 'service',service, 'shortname',shortname)) as b from md_business_component),
+        e as
+        (select json_agg(json_build_object('type', type, 'name', name, 'shortname', shortname)) as erc from md_ercsa )
+    select json_build_object('business_component',b, 'ercsa', erc, 'product', p) as result from bc, e, prd;`)
+        res.json({ status: 'OK - Results for MD', result: result.rows[0].result })
+    } catch (err) {
+        pino.logger.error(err);
+        res.json({ status: 'MD get error' });
+    } finally {
+        client.release()
+    }
+})
+app.get("/md", function (req, res) {
     res.redirect('/index.html')
 })
 

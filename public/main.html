@@ -28,6 +28,9 @@
     <!-- Load the following for BootstrapVueIcons support -->
     <script src="https://unpkg.com/bootstrap-vue@2.22.0/dist/bootstrap-vue-icons.min.js"></script>
 
+    <!-- Load application utils -->
+    <script src="js/utils.js"></script>
+
 </head>
 
 <body>
@@ -64,7 +67,7 @@
                 <b-row>
                     <b-col>
                         <keep-alive>
-                            <component v-bind:is="theComponent"></component>
+                            <component v-bind:is="theComponent" v-bind:server_transactions="transactions"></component>
                         </keep-alive>
                     </b-col>
                 </b-row>
