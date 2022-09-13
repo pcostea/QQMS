@@ -49,10 +49,21 @@ function getBusinessComponentERCSA() {
     //input data is in window.user_data and window.md
     let result = [];
     window.user_data.forEach(element => {
-        let bc = element.business_component;
-        let ercsa = element.ercsa.join();
-        result.push({'business_component': bc, 'ercsa_categories': ercsa})
+        let bc = window.md.business_component.find(elm => elm.shortname == element.business_component);
+        let ercsa = element.ercsa.join(', ');
+        result.push({'business_component': bc.component, 'business_service': bc.service , 'ERCSA_categories': ercsa})
     });
     return result;
 
+}
+
+function getBusinessComponent() {
+    let result = [];
+
+    window.user_data.forEach(element =>{
+        let value = element.business_component;
+        let text = window.md.business_component.find(elm => elm.shortname == value).service;
+        result.push({text: text, value: value});
+    })
+    return result;
 }

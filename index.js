@@ -59,7 +59,6 @@ function isAuthenticated(req, res, next) {
     else next('route')
 }
 
-
 /*
  * Handle endpoints
  */
@@ -149,6 +148,60 @@ app.get("/md", function (req, res) {
     res.redirect('/index.html')
 })
 
+app.post("/questionnaire", isAuthenticated, async function(req, res, next){
+    pino.logger.info(req.body.payload);
+
+    const client = await pool.connect()
+    try {
+        //pino.logger.info(req.body.password)
+        let result = await client.query(`INSERT INTO ercsa_response(application_user_id, response, status, ts) 
+        VALUES(
+            (SELECT uid FROM application_user WHERE email = '${req.session.user[0].username}'), 
+            '${JSON.stringify(req.body.payload)}', '${req.body.payload.status}', 
+            NOW());`)
+        //pino.logger.info(result)
+        res.json({ status: 'OK - Questionnaire response succesfuly registered' });
+
+    } catch (err) {
+        pino.logger.error(err);
+        res.json({ status: 'Questionnaire response value error' });
+    } finally {
+        // Make sure to release the client before any error handling,
+        // just in case the error handling itself throws an error.
+        client.release()
+    }
+})
+
+app.get("/questionnaire", isAuthenticated, async function(req, res, next){
+    const client = await pool.connect()
+    try {
+        let bc = [];
+        req.session.user.forEach(element => {
+            bc.push(element.business_component);
+        });
+        bc = JSON.stringify(bc).replaceAll("[","").replaceAll("]","").replaceAll("\"","'")
+
+        let result = await client.query(`
+        select uid, application_user_id, response, status, extract (year from ts) as y, extract (quarter from ts) as q from ercsa_response
+        where application_user_id = (select uid from application_user where email = '${req.session.user[0].username}') AND 
+        response->>'business_component' in (${bc})
+        order by  y desc, q desc, response->>'business_component'
+        `)
+        pino.logger.info(result);
+        res.json({ status: 'OK - Results for MD', result: result.rows })
+    } catch (err) {
+        pino.logger.error(err);
+        res.json({ status: 'MD get error' });
+    } finally {
+        client.release()
+    }
+})
+
+app.get("/questionnaire", function(req, res){
+    res.redirect("/index.html")
+})
+
+
 app.post('/logout', function (req, res, next) {
     // logout logic
 
@@ -213,7 +266,6 @@ app.post('/login', async function (req, res, next) {
     }
 
 });
-
 
 /*
  * Error pages

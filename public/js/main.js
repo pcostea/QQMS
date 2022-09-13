@@ -21,7 +21,8 @@ function createVueApp() {
                 el: "#app",
                 data: {
                     theComponent: 'dashboard',
-                    transactions: []
+                    transactions: [],
+                    responses:[]
                 },
                 methods: {
                     logout() {
@@ -43,8 +44,17 @@ function createVueApp() {
                             })
                     },
                     showERCSA() {
-                        this.theComponent = 'ercsa';
-                        console.log("show ercsa");
+                        getData('/questionnaire')
+                            .then(data => {
+                                //augment the result set
+                                this.responses = data.result;
+                                this.theComponent = 'ercsa';
+                                console.log("show ercsa");
+                            })
+                            .catch((error) => {
+                                console.log(error);
+                            })
+                        
                     },
                     showReports() {
                         this.theComponent = 'reports';

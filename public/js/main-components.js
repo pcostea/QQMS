@@ -305,11 +305,166 @@ Vue.component('transactions',
 
 Vue.component('ercsa',
     {
+        props: ['ercsa_responses'],
         data: function () {
             return {
+                table_responses: this.ercsa_responses,
+                table_fields:[
+                    { key: 'response.business_component', label: 'Business Component' },
+                    { key: 'y', label: 'Year'},
+                    { key:'q', label:'Quarter' },
+                    { key:'status', label: 'Status'},
+                    { key: 'actions', label: 'Actions' }
+                ],
                 corporation: window.user_data ? window.user_data[0].corporation : 'The Very Big Corporation of America',
                 user: window.user_data[0].username,
-                bcercsa: getBusinessComponentERCSA()
+                bcercsa: getBusinessComponentERCSA(),
+                bc: getBusinessComponent(),
+                form: {
+                    bc: window.user_data[0].business_component,
+                    show: true,
+                    q_buttons: false
+                },
+                contrl: false,
+                people: false,
+                exectn: false,
+                buscon: false,
+                rskctl: false,
+                intlam: false,
+                phsacc: false,
+                polpro: false,
+                datqty: false,
+                vendor: false,
+                corsys: false,
+                extlam: false,
+                trding: false,
+                modmgt: false,
+                ccrass: false,
+                ccradm: false,
+                liqdty: false,
+                trdeal: false,
+                prdapp: false,
+                intrat: false,
+                envmnt: false,
+                contrl_form: { answer01: true, answer02: true, answer03: true },
+                people_form: { answer01: true, answer02: 0, answer03: 100, answer04: 100, answer05: 100, answer06: true },
+                exectn_form: { answer01_04: 100, answer05: 100, answer06: 100 },
+                buscon_form: { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true, answer07: true, answer08: true, answer09: true },
+                rskctl_form: { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true, answer07: true, answer08: true, answer09: true },
+                intlam_form: { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true, answer07: true, answer08: true, answer09: true },
+                phsacc_form: { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true, answer07: true },
+                polpro_form: { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true, answer07: true },
+                datqty_form: { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true, answer07: true, answer08: true, answer09: true, answer10: true },
+                vendor_form: { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true, answer07: true },
+                corsys_form: { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true, answer07: true, answer08: true, answer09: true, answer10: true },
+                extlam_form: { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true },
+                trding_form: { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true, answer07: true, answer08: true, answer09: true, answer10: true },
+                modmgt_form: { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true, answer07: true, answer08: true, answer09: true, answer10: true, answer11: true, answer12: true },
+                ccrass_form: { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true, answer07: true, answer08: true, answer09: true, answer10: true },
+                ccradm_form: { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true, answer07: true },
+                liqdty_form: { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true, answer07: true, answer08: true, answer09: true },
+                trdeal_form: { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true },
+                prdapp_form: { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true, answer07: true, answer08: true, answer09: true },
+                intrat_form: { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true, answer07: true, answer08: true },
+                envmnt_form: {},
+
+            }
+        },
+        methods: {
+            showQuestionnaire(event) {
+                this.form.show = false;
+                this.form.q_buttons = true;
+                /*
+                this.contrl = true;
+                this.people = true;
+                this.exectn = true;
+                this.buscon = true;
+                this.rskctl = true;
+                this.intlam = true;
+                this.phsacc = true;
+                this.polpro = true;
+                this.ccrass = true;
+                this.ccradm = true;
+                this.modmgt = true;
+                this.datqty = true;
+                this.trding = true;
+                this.prdapp = true;
+                this.extlam = true;
+                this.corsys = true;
+                this.vendor = true;
+                this.trdeal = true;
+                this.liqdty = true;
+                this.intrat = true;
+                */
+               
+                console.log(this.form.bc);
+                console.log(this.bcercsa);
+                window.user_data.forEach(element =>{
+                    if( element.business_component == this.form.bc){
+                        element.ercsa.forEach(elm => this[elm.toLowerCase()] = true)
+                    }
+                })
+               
+            },
+            saveReport(event) {
+                let q_result = {};
+                q_result.business_component = this.form.bc;
+                q_result.questionnaire = [];
+                q_result.status="IN PROGRESS"
+                this.$children.forEach(element => {
+                    if (typeof (element.computeScore) !== 'undefined') {
+                        let result = element._data;
+                        result.score = element.computeScore();
+                        q_result.questionnaire.push(result);
+                    }
+                });
+                postData('/questionnaire', { payload: q_result })
+                    .then(data => {
+                        console.log(JSON.stringify(q_result));
+                        console.log(JSON.stringify(data));
+                        if (data.status.indexOf('error') == -1){
+                            this.$bvToast.toast(data.status, {
+                                title: 'Success',
+                                variant: 'succes',
+                                solid: true
+                              })
+                        }else{
+                            this.$bvToast.toast(data.status, {
+                                title: 'Error',
+                                variant: 'danger',
+                                solid: true
+                              })
+                        }
+                        
+                        
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        this.$bvToast.toast(`${error}`, {
+                            title: 'Error',
+                            variant: 'danger',
+                            solid: true
+                          })
+                    })
+
+            },
+            submitReport(event) {
+                let q_result = {};
+                q_result.business_component = this.form.bc;
+                q_result.questionnaire = [];
+                q_result.status="FINAL"
+                this.$children.forEach(element => {
+                    if (typeof (element.computeScore) !== 'undefined') {
+                        let result = element._data;
+                        result.score = element.computeScore();
+                        q_result.questionnaire.push(result);
+                    }
+                });
+                console.log(q_result);
+            },
+            editQuestionnaire(item, index, button){
+                console.log(item);
+                console.log(index);
             }
         },
         template: `
@@ -320,7 +475,7 @@ Vue.component('ercsa',
             </b-card-text>
 
             <b-card-text>
-            List of business components for {{user}} with associated ERCSA categories
+            Business Components and Serivces user: <b>{{user}}</b> is responsible for, with their associated ERCSA Categories:
             </b-card-text>
 
             <b-table :items="bcercsa"></b-table>
@@ -332,7 +487,96 @@ Vue.component('ercsa',
         <b-card-text>
         Create new questionnaire or continue the last saved one. Only one questionnaire per quarter is allowed. Previous periods should be closed automatically.
         </b-card-text>
+
+        <b-table striped hover :items="table_responses" :fields="table_fields">
+        <template #cell(actions)="row">
+        <b-button size="sm" @click="editQuestionnaire(row.item, row.index, $event.target)" class="mr-1" :disabled="row.item.status=='DONE'">
+          {{ (row.item.status=="NEW")?'New Questionnaire':'Continue Responding'}}
+        </b-button>
+      </template>
+        </b-table>
+
+        <b-form v-if="form.show">
+            <b-form-group id="gr-bc" label="Business Component:" label-for="input-bc">
+            <b-form-select id="input-bc" v-model="form.bc" :options="bc" required></b-form-select>
+            </b-form-group>
+
+            <b-button type="button" variant="primary" @click="showQuestionnaire($event)">New Questionnaire</b-button>
+        </b-form>
         </b-card>
+
+        <b-container fluid>
+            <template v-if="contrl">
+                <b-row class="mx-3 p-3"> <b-col> <contrl v-bind:form="contrl_form"></contrl> </b-col> </b-row>
+            </template>
+            <template v-if="people">
+                <b-row class="mx-3 p-3"> <b-col> <people v-bind:form="people_form"></people> <b-col> </b-row>
+            </template>
+            <template v-if="exectn">
+                <b-row class="mx-3 p-3"> <b-col> <exectn v-bind:form="exectn_form"></exectn> </b-col> </b-row>
+            </template>
+            <template v-if="buscon">
+                <b-row class="mx-3 p-3"> <b-col> <buscon v-bind:form="buscon_form"></buscon> </b-col> </b-row>
+            </template>
+            <template v-if="rskctl">
+                <b-row class="mx-3 p-3"> <b-col> <rskctl v-bind:form="rskctl_form"></rskctl> </b-col> </b-row>
+            </template>
+            <template v-if="intlam">
+                <b-row class="mx-3 p-3"> <b-col> <intlam v-bind:form="intlam_form"></intlam> </b-col> </b-row>
+            </template>
+            <template v-if="phsacc">
+                <b-row class="mx-3 p-3"> <b-col> <phsacc v-bind:form="phsacc_form"></phsacc> </b-col> </b-row>
+            </template>
+            <template v-if="polpro">
+                <b-row class="mx-3 p-3"> <b-col> <polpro v-bind:form="polpro_form"></polpro> </b-col> </b-row>
+            </template>
+            <template v-if="ccrass">
+                <b-row class="mx-3 p-3"> <b-col> <ccrass v-bind:form="ccrass_form"></ccrass> </b-col> </b-row>
+            </template>
+            <template v-if="ccradm">
+                <b-row class="mx-3 p-3"> <b-col> <ccradm v-bind:form="ccradm_form"></ccradm> </b-col> </b-row>
+            </template>
+            <template v-if="modmgt">
+                <b-row class="mx-3 p-3"> <b-col> <modmgt v-bind:form="modmgt_form"></modmgt> </b-col> </b-row>
+            </template>
+            <template v-if="datqty">
+                <b-row class="mx-3 p-3"> <b-col> <datqty v-bind:form="datqty_form"></datqty> </b-col> </b-row>
+            </template>
+            <template v-if="trding">
+            <b-row class="mx-3 p-3"> <b-col> <trding v-bind:form="trding_form"></trding> </b-col> </b-row>
+            </template>
+            <template v-if="prdapp">
+            <b-row class="mx-3 p-3"> <b-col> <prdapp v-bind:form="prdapp_form"></prdapp> </b-col> </b-row>
+            </template>
+            <template v-if="extlam">
+            <b-row class="mx-3 p-3"> <b-col> <extlam v-bind:form="extlam_form"></extlam> </b-col> </b-row>
+            </template>
+            <template v-if="corsys">
+            <b-row class="mx-3 p-3"> <b-col> <corsys v-bind:form="corsys_form"></corsys> </b-col> </b-row>
+            </template>
+            <template v-if="vendor">
+            <b-row class="mx-3 p-3"> <b-col> <vendor v-bind:form="vendor_form"></vendor> </b-col> </b-row>
+            </template>
+            <template v-if="trdeal">
+            <b-row class="mx-3 p-3"> <b-col> <trdeal v-bind:form="trdeal_form"></trdeal> </b-col> </b-row>
+            </template>
+            <template v-if="liqdty">
+            <b-row class="mx-3 p-3"> <b-col> <liqdty v-bind:form="liqdty_form"></liqdty> </b-col> </b-row>
+            </template>
+            <template v-if="intrat">
+            <b-row class="mx-3 p-3"> <b-col> <intrat v-bind:form="intrat_form"></intrat> </b-col> </b-row>
+            </template>
+
+            <template v-if="form.q_buttons">
+            <b-row class="mx-3 p-3">
+                <b-col>
+                    <b-button variant="warning" @click="submitReport($event)">Submit questionnaire</b-button>
+                    <b-button variant="success" @click="saveReport($event)">Save questionnaire</b-button>
+                </b-col>
+            </b-row>
+            </template>
+        </b-container>
+
         </div>
         `
     }
