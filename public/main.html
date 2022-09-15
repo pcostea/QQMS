@@ -28,6 +28,9 @@
     <!-- Load the following for BootstrapVueIcons support -->
     <script src="https://unpkg.com/bootstrap-vue@2.22.0/dist/bootstrap-vue-icons.min.js"></script>
 
+    <!-- Load application utils -->
+    <script src="js/utils.js"></script>
+
 </head>
 
 <body>
@@ -64,13 +67,35 @@
                 <b-row>
                     <b-col>
                         <keep-alive>
-                            <component v-bind:is="theComponent"></component>
+                            <component v-bind:is="theComponent" v-bind:server_transactions="transactions" v-bind:ercsa_responses="responses"></component>
                         </keep-alive>
                     </b-col>
                 </b-row>
             </b-container>
         </div>
     </main>
+    <script src="js/ercsa/g_contrl.js"></script>
+    <script src="js/ercsa/g_exectn.js"></script>
+    <script src="js/ercsa/g_people.js"></script>
+    <script src="js/ercsa/g_buscon.js"></script>
+    <script src="js/ercsa/g_rskctl.js"></script>
+    <script src="js/ercsa/g_intlam.js"></script>
+    <script src="js/ercsa/g_phsacc.js"></script>
+    <script src="js/ercsa/g_polpro.js"></script>
+    <script src="js/ercsa/t_ccrass.js"></script>
+    <script src="js/ercsa/t_ccradm.js"></script>
+    <script src="js/ercsa/t_modmgt.js"></script>
+    <script src="js/ercsa/t_datqty.js"></script>
+    <script src="js/ercsa/t_trding.js"></script>
+    <script src="js/ercsa/t_prdapp.js"></script>
+    <script src="js/ercsa/t_extlam.js"></script>
+    <script src="js/ercsa/t_corsys.js"></script>
+    <script src="js/ercsa/t_vendor.js"></script>
+    <script src="js/ercsa/t_trdeal.js"></script>
+    <script src="js/ercsa/t_liqdty.js"></script>
+    <script src="js/ercsa/t_intrat.js"></script>
+
+
     <script src="js/main-components.js"></script>
     <script src="js/main.js"></script>
 

@@ -61,77 +61,6 @@ create table product (
 );
 --rollback DROP TABLE product;
 
---changeset dragos-constantin-stoica:71003 runAlways:true runOnChange:true labels:delete-business_component context:issue71
-DROP TABLE IF EXISTS business_component CASCADE;
-
---changeset dragos-constantin-stoica:71004 runAlways:true runOnChange:true labels:create-business_component context:issue71
-create table business_component (
-    uid serial primary key,
-    corporation_id integer not null,
-    version varchar(255) not null,
-    component varchar(255) not null,
-    service varchar(255) not null,
-    shortname varchar(6) not null,
-    ts timestamp not null,
-    valid_from timestamp not null,
-    valid_until timestamp,
-    constraint corporation_fkey
-        foreign key(corporation_id)
-            references corporation(uid)
-);
---rollback DROP TABLE business_component;
-
-
---changeset dragos-constantin-stoica:71005 runAlways:true runOnChange:true labels:delete-application_user context:issue71
-DROP TABLE IF EXISTS application_user CASCADE;
-
---changeset dragos-constantin-stoica:71006 runAlways:true runOnChange:true labels:create-application_user context:issue71
-create table application_user (
-    uid serial primary key,
-    username varchar(255) not null,
-    email varchar(255) not null,
-    password varchar(255) not null,
-    status varchar(255) not null,
-    created timestamp not null,
-    last_login timestamp,
-    constraint uq_email UNIQUE(email)
-);
---rollback DROP TABLE application_user;
-
---changeset dragos-constantin-stoica:71007 runAlways:true runOnChange:true labels:delete-user_to_business_component_mapping context:issue71
-DROP TABLE IF EXISTS user_to_business_component_mapping;
-
---changeset dragos-constantin-stoica:71008 runAlways:true runOnChange:true labels:create-user_to_business_component_mapping context:issue71
-create table user_to_business_component_mapping (
-    uid serial primary key,
-    business_component_id integer not null,
-    application_user_id integer not null,
-    constraint business_component_fkey
-        foreign key(business_component_id)
-            references business_component(uid),
-    constraint application_user_fkey
-        foreign key(application_user_id)
-            references application_user(uid)
-);
---rollback DROP TABLE user_to_business_component_mapping;
-
---changeset max:67001 runAlways:true runOnChange:true  labels:delete-transaction_value context:issue67
-DROP TABLE IF EXISTS transaction_value CASCADE;
-
---changeset dragos-constantin-stoica:67002 runAlways:true runOnChange:true labels:create-transaction_value context:issue67
-create table transaction_value (
-    uid serial primary key not null,
-    product_id integer not null,
-    value money not null,
-    currency varchar(3) not null,
-    ts timestamp not null,
-    constraint product_fkey
-        foreign key(product_id)
-            references product(uid)
-);
---rollback DROP TABLE transaction_value;
-
-
 --changeset dragos-constantin-stoica:65001 runAlways:true runOnChange:true labels:delete-ercsa context:issue65
 DROP TABLE IF EXISTS ercsa CASCADE;
 
@@ -173,6 +102,22 @@ create table euf (
 
 );
 --rollback DROP TABLE euf;
+
+--changeset max:67001 runAlways:true runOnChange:true  labels:delete-transaction_value context:issue67
+DROP TABLE IF EXISTS transaction_value CASCADE;
+
+--changeset dragos-constantin-stoica:67002 runAlways:true runOnChange:true labels:create-transaction_value context:issue67
+create table transaction_value (
+    uid serial primary key not null,
+    product_id integer not null,
+    value money not null,
+    currency varchar(3) not null,
+    ts timestamp not null,
+    constraint product_fkey
+        foreign key(product_id)
+            references product(uid)
+);
+--rollback DROP TABLE transaction_value;
 
 --changeset dragos-constantin-stoica:68001 runAlways:true runOnChange:true labels:delete-business_component_product context:issue68
 DROP TABLE IF EXISTS business_component_product CASCADE;
@@ -223,20 +168,69 @@ DROP TABLE IF EXISTS ercsa_response CASCADE;
 --changeset dragos-constantin-stoica:70002 runAlways:true runOnChange:true labels:create-ercsa_response context:issue70
 create table ercsa_response (
     uid serial primary key,
-    business_component_ercsa_id integer not null,
     application_user_id integer not null,
     response jsonb not null,
     status varchar(60) not null,
     ts timestamp not null,
-    constraint business_component_ercsa_fkey
-        foreign key(business_component_ercsa_id)
-            references business_component_ercsa(uid),
     constraint application_user_fkey
         foreign key(application_user_id)
             references application_user(uid)
 
 );
 --rollback DROP TABLE ercsa_response;
+
+--changeset dragos-constantin-stoica:71003 runAlways:true runOnChange:true labels:delete-business_component context:issue71
+DROP TABLE IF EXISTS business_component CASCADE;
+
+--changeset dragos-constantin-stoica:71004 runAlways:true runOnChange:true labels:create-business_component context:issue71
+create table business_component (
+    uid serial primary key,
+    corporation_id integer not null,
+    version varchar(255) not null,
+    component varchar(255) not null,
+    service varchar(255) not null,
+    shortname varchar(6) not null,
+    ts timestamp not null,
+    valid_from timestamp not null,
+    valid_until timestamp,
+    constraint corporation_fkey
+        foreign key(corporation_id)
+            references corporation(uid)
+);
+--rollback DROP TABLE business_component;
+
+--changeset dragos-constantin-stoica:71005 runAlways:true runOnChange:true labels:delete-application_user context:issue71
+DROP TABLE IF EXISTS application_user CASCADE;
+
+--changeset dragos-constantin-stoica:71006 runAlways:true runOnChange:true labels:create-application_user context:issue71
+create table application_user (
+    uid serial primary key,
+    username varchar(255) not null,
+    email varchar(255) not null,
+    password varchar(255) not null,
+    status varchar(255) not null,
+    created timestamp not null,
+    last_login timestamp,
+    constraint uq_email UNIQUE(email)
+);
+--rollback DROP TABLE application_user;
+
+--changeset dragos-constantin-stoica:71007 runAlways:true runOnChange:true labels:delete-user_to_business_component_mapping context:issue71
+DROP TABLE IF EXISTS user_to_business_component_mapping;
+
+--changeset dragos-constantin-stoica:71008 runAlways:true runOnChange:true labels:create-user_to_business_component_mapping context:issue71
+create table user_to_business_component_mapping (
+    uid serial primary key,
+    business_component_id integer not null,
+    application_user_id integer not null,
+    constraint business_component_fkey
+        foreign key(business_component_id)
+            references business_component(uid),
+    constraint application_user_fkey
+        foreign key(application_user_id)
+            references application_user(uid)
+);
+--rollback DROP TABLE user_to_business_component_mapping;
 
 /************************
 
@@ -254,7 +248,6 @@ create table md_business_component (
     shortname varchar(6) not null
 );
 --rollback DROP TABLE md_business_component;
-
 
 --changeset max:77001 runAlways:true runOnChange:true  labels:delete-md_product context:issue77
 DROP TABLE IF EXISTS md_product CASCADE;
@@ -276,7 +269,6 @@ create table md_risk_type (
     shortname varchar(6)
 );
 --rollback DROP TABLE md_risk_type;
-
 
 --changeset dragos-constantin-stoica:79001 runAlways:true runOnChange:true labels:delete-md_ercsa context:issue79
 DROP TABLE IF EXISTS md_ercsa CASCADE;
@@ -322,17 +314,6 @@ create table md_business_component_ercsa (
 );
 --rollback DROP TABLE md_business_component_ercsa;
 
-
---changeset dragos-constantin-stoica:81001 runAlways:true runOnChange:true labels:delete-md_business_component_product context:issue81
-DROP TABLE IF EXISTS md_business_component_product CASCADE;
-
---changeset dragos-constantin-stoica:81002 runAlways:true runOnChange:true labels:create-md_business_component_product context:issue81
-create table md_business_component_product (
-    product_shortname varchar(6) not null,
-    businesscomponent_shortname varchar(6) not null    
-);
---rollback DROP TABLE md_business_component_product;
-
 --changeset dragos-constantin-stoica:82003 runAlways:true runOnChange:true labels:delete-md_application_user context:issue82
 DROP TABLE IF EXISTS md_application_user CASCADE;
 
@@ -350,7 +331,6 @@ create table md_application_user (
   and functions
 
 ***************************/
-
 
 --changeset dragos-constantin-stoica:71013 runAlways:true runOnChange:true labels:get-user context:issue71
 DROP FUNCTION IF EXISTS getuser;
