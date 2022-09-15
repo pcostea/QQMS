@@ -371,7 +371,7 @@ Vue.component('ercsa',
             }
         },
         methods: {
-            saveReport(event,status) {
+            saveReport(event, status) {
                 let q_result = {};
                 q_result.business_component = this.selected_item.response.business_component;
                 q_result.corporation = this.corporation;
@@ -445,7 +445,7 @@ Vue.component('ercsa',
                                     this.trdeal_form = { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true };
                                     this.prdapp_form = { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true, answer07: true, answer08: true, answer09: true };
                                     this.intrat_form = { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true, answer07: true, answer08: true };
-                    
+
 
                                 })
                                 .catch((error) => {
@@ -658,12 +658,21 @@ Vue.component('ercsa',
 
 Vue.component('reports',
     {
+        props: ['ercsa_report'],
         data: function () {
-            counter: 0
+            return {
+                ercsa_table: this.ercsa_report
+            }
         },
         template: `
         <div>
         <b-card title="Reports" sub-title="Some stuff extra">
+            <b-card-text>
+            ERCSA progress at Corporation level
+            </b-card-text>
+            <b-table striped hover :items="ercsa_table">
+            </b-table>
+
             <b-card-text>
             Report with IR caluculation based on Transaction values, EUF and VBW
             </b-card-text>

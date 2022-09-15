@@ -22,7 +22,8 @@ function createVueApp() {
                 data: {
                     theComponent: 'dashboard',
                     transactions: [],
-                    responses:[]
+                    responses: [],
+                    ercsa_report: [],
                 },
                 methods: {
                     logout() {
@@ -30,7 +31,6 @@ function createVueApp() {
                     },
                     showDashboard() {
                         this.theComponent = 'dashboard';
-                        console.log("show dashboard");
                     },
                     showTransactions() {
                         getData('/transactions')
@@ -54,11 +54,26 @@ function createVueApp() {
                             .catch((error) => {
                                 console.log(error);
                             })
-                        
+
                     },
                     showReports() {
-                        this.theComponent = 'reports';
-                        console.log("show ercsa");
+                        getData('/reports?dataset=ercsa')
+                            .then(data0 => {
+                                //augment the result set
+                                getData('/reports?dataset=business-component_ercsa')
+                                    .then(data1 => {
+                                        //augment the result set
+                                        this.ercsa_report = prepareERCSAReport(data0.result, data1.result);
+                                        this.theComponent = 'reports';
+                                        console.log("show reports");
+                                    })
+                                    .catch((error) => {
+                                        console.log(error);
+                                    })
+                            })
+                            .catch((error) => {
+                                console.log(error);
+                            })
                     }
                 }
             });

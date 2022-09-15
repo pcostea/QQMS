@@ -112,7 +112,11 @@ function augmentERCSAQuestionnaire(responses) {
             }
         }
     })
+    return result;
+}
+
+function prepareERCSAReport(ercsa_responses, business_components_users) {
+    let result = ercsa_responses;
 
     return result;
-
 }

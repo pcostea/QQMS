@@ -71,9 +71,10 @@ app.post("/checksession", function (req, res) {
     }
 })
 
-app.get("/dashboard", isAuthenticated, function (req, res) {
+app.get("/dashboard", isAuthenticated, function (req, res, next) {
     res.redirect('/main.html')
 })
+
 app.get("/dashboard", function (req, res) {
     res.redirect('/index.html')
 })
@@ -109,7 +110,7 @@ app.get("/transactions", isAuthenticated, async function (req, res, next) {
         ORDER BY transaction_value.ts DESC;`)
         //pino.logger.info(result)
 
-        res.json({ status: 'OK - Results of histrical Transaction', result: result.rows });
+        res.json({ status: 'OK - Results of historycal Transaction', result: result.rows });
 
     } catch (err) {
         pino.logger.error(err);
@@ -120,6 +121,7 @@ app.get("/transactions", isAuthenticated, async function (req, res, next) {
         client.release()
     }
 })
+
 app.get("/transactions", function (req, res) {
     res.redirect('/index.html')
 })
@@ -144,6 +146,7 @@ app.get("/md", isAuthenticated, async function (req, res, next) {
         client.release()
     }
 })
+
 app.get("/md", function (req, res) {
     res.redirect('/index.html')
 })
@@ -163,7 +166,7 @@ app.post("/questionnaire", isAuthenticated, async function (req, res, next) {
                 NOW());`)
             //pino.logger.info(result)
             res.json({ status: 'OK - Questionnaire response succesfuly registered' });
-        }else{
+        } else {
             let result = await client.query(`UPDATE ercsa_response SET
             response = '${JSON.stringify(req.body.payload)}', 
             status = '${req.body.payload.status}', 
@@ -212,6 +215,60 @@ app.get("/questionnaire", function (req, res) {
     res.redirect("/index.html")
 })
 
+app.get("/reports", isAuthenticated, async function (req, res, next) {
+    let result;
+    const client = await pool.connect()
+    try {
+        switch (req.query.dataset) {
+            case 'ercsa':
+                result = await client.query(`select response->>'corporation' as corporation, 
+                                                bc.component as business_component,
+                                                bc.service as busines_service, 
+                                                response->>'y' as y, 
+                                                response->>'q' as q, 
+                                                response->>'status' as status,
+                                                (select email from application_user where uid = application_user_id) as user 
+                from ercsa_response
+                join business_component as bc on bc.shortname =  response->>'business_component'
+                where response->>'corporation' = '${req.session.user[0].corporation}';`)
+                //pino.logger.info(result)
+
+                res.json({ status: 'OK - Results of ERCSA progress', result: result.rows });
+                break;
+
+            case 'business-component_ercsa':
+                result = await client.query(`select '${req.session.user[0].corporation}' as corporation, 
+                                                    component as business_component, 
+                                                    service as business_service, 
+                                                    au.email as user 
+                                            from business_component as bc
+                join user_to_business_component_mapping as utbcm on utbcm.business_component_id = bc.uid
+                join application_user as au on au.uid = utbcm.application_user_id
+                where
+                    corporation_id = (select corp.uid from corporation as corp where name = '${req.session.user[0].corporation}');`)
+                //pino.logger.info(result)
+
+                res.json({ status: 'OK - Results of ERCSA progress', result: result.rows });
+                break;
+
+            default:
+                res.json({ status: 'OK - Results of reporting', result: {message:'Dataset not implemented.'} });
+                break;
+        }
+
+    } catch (err) {
+        pino.logger.error(err);
+        res.json({ status: 'Reporting error' });
+    } finally {
+        // Make sure to release the client before any error handling,
+        // just in case the error handling itself throws an error.
+        client.release()
+    }
+})
+
+app.get("/reports", function (req, res) {
+    res.redirect("/index.html")
+})
 
 app.post('/logout', function (req, res, next) {
     // logout logic
