@@ -309,20 +309,20 @@ Vue.component('ercsa',
         data: function () {
             return {
                 table_responses: this.ercsa_responses,
-                table_fields:[
-                    { key: 'response.business_component', label: 'Business Component' },
-                    { key: 'y', label: 'Year'},
-                    { key:'q', label:'Quarter' },
-                    { key:'status', label: 'Status'},
+                table_fields: [
+                    { key: 'bc', label: 'Business Component' },
+                    { key: 'bs', label: 'Business Service' },
+                    { key: 'y', label: 'Year' },
+                    { key: 'q', label: 'Quarter' },
+                    { key: 'status', label: 'Status' },
                     { key: 'actions', label: 'Actions' }
                 ],
+                selected_item: {},
                 corporation: window.user_data ? window.user_data[0].corporation : 'The Very Big Corporation of America',
                 user: window.user_data[0].username,
                 bcercsa: getBusinessComponentERCSA(),
                 bc: getBusinessComponent(),
                 form: {
-                    bc: window.user_data[0].business_component,
-                    show: true,
                     q_buttons: false
                 },
                 contrl: false,
@@ -345,7 +345,6 @@ Vue.component('ercsa',
                 trdeal: false,
                 prdapp: false,
                 intrat: false,
-                envmnt: false,
                 contrl_form: { answer01: true, answer02: true, answer03: true },
                 people_form: { answer01: true, answer02: 0, answer03: 100, answer04: 100, answer05: 100, answer06: true },
                 exectn_form: { answer01_04: 100, answer05: 100, answer06: 100 },
@@ -366,51 +365,20 @@ Vue.component('ercsa',
                 trdeal_form: { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true },
                 prdapp_form: { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true, answer07: true, answer08: true, answer09: true },
                 intrat_form: { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true, answer07: true, answer08: true },
+                envmnt: false,
                 envmnt_form: {},
 
             }
         },
         methods: {
-            showQuestionnaire(event) {
-                this.form.show = false;
-                this.form.q_buttons = true;
-                /*
-                this.contrl = true;
-                this.people = true;
-                this.exectn = true;
-                this.buscon = true;
-                this.rskctl = true;
-                this.intlam = true;
-                this.phsacc = true;
-                this.polpro = true;
-                this.ccrass = true;
-                this.ccradm = true;
-                this.modmgt = true;
-                this.datqty = true;
-                this.trding = true;
-                this.prdapp = true;
-                this.extlam = true;
-                this.corsys = true;
-                this.vendor = true;
-                this.trdeal = true;
-                this.liqdty = true;
-                this.intrat = true;
-                */
-               
-                console.log(this.form.bc);
-                console.log(this.bcercsa);
-                window.user_data.forEach(element =>{
-                    if( element.business_component == this.form.bc){
-                        element.ercsa.forEach(elm => this[elm.toLowerCase()] = true)
-                    }
-                })
-               
-            },
-            saveReport(event) {
+            saveReport(event,status) {
                 let q_result = {};
-                q_result.business_component = this.form.bc;
+                q_result.business_component = this.selected_item.response.business_component;
+                q_result.corporation = this.corporation;
+                q_result.y = this.selected_item.y;
+                q_result.q = this.selected_item.q;
                 q_result.questionnaire = [];
-                q_result.status="IN PROGRESS"
+                q_result.status = status;
                 this.$children.forEach(element => {
                     if (typeof (element.computeScore) !== 'undefined') {
                         let result = element._data;
@@ -418,53 +386,164 @@ Vue.component('ercsa',
                         q_result.questionnaire.push(result);
                     }
                 });
-                postData('/questionnaire', { payload: q_result })
+                postData('/questionnaire', { payload: q_result, extra: this.selected_item })
                     .then(data => {
                         console.log(JSON.stringify(q_result));
                         console.log(JSON.stringify(data));
-                        if (data.status.indexOf('error') == -1){
+                        if (data.status.indexOf('error') == -1) {
                             this.$bvToast.toast(data.status, {
                                 title: 'Success',
-                                variant: 'succes',
+                                variant: 'success',
                                 solid: true
-                              })
-                        }else{
+                            })
+                            getData('/questionnaire')
+                                .then(data => {
+                                    //augment the result set
+                                    this.table_responses = augmentERCSAQuestionnaire(data.result);
+
+                                    this.selected_item = {};
+                                    //reset form and hide it
+                                    this.form.q_buttons = false;
+
+                                    this.contrl = false;
+                                    this.people = false;
+                                    this.exectn = false;
+                                    this.buscon = false;
+                                    this.rskctl = false;
+                                    this.intlam = false;
+                                    this.phsacc = false;
+                                    this.polpro = false;
+                                    this.ccrass = false;
+                                    this.ccradm = false;
+                                    this.modmgt = false;
+                                    this.datqty = false;
+                                    this.trding = false;
+                                    this.prdapp = false;
+                                    this.extlam = false;
+                                    this.corsys = false;
+                                    this.vendor = false;
+                                    this.trdeal = false;
+                                    this.liqdty = false;
+                                    this.intrat = false;
+                                    this.contrl_form = { answer01: true, answer02: true, answer03: true };
+                                    this.people_form = { answer01: true, answer02: 0, answer03: 100, answer04: 100, answer05: 100, answer06: true };
+                                    this.exectn_form = { answer01_04: 100, answer05: 100, answer06: 100 };
+                                    this.buscon_form = { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true, answer07: true, answer08: true, answer09: true };
+                                    this.rskctl_form = { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true, answer07: true, answer08: true, answer09: true };
+                                    this.intlam_form = { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true, answer07: true, answer08: true, answer09: true };
+                                    this.phsacc_form = { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true, answer07: true };
+                                    this.polpro_form = { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true, answer07: true };
+                                    this.datqty_form = { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true, answer07: true, answer08: true, answer09: true, answer10: true };
+                                    this.vendor_form = { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true, answer07: true };
+                                    this.corsys_form = { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true, answer07: true, answer08: true, answer09: true, answer10: true };
+                                    this.extlam_form = { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true };
+                                    this.trding_form = { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true, answer07: true, answer08: true, answer09: true, answer10: true };
+                                    this.modmgt_form = { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true, answer07: true, answer08: true, answer09: true, answer10: true, answer11: true, answer12: true };
+                                    this.ccrass_form = { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true, answer07: true, answer08: true, answer09: true, answer10: true };
+                                    this.ccradm_form = { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true, answer07: true };
+                                    this.liqdty_form = { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true, answer07: true, answer08: true, answer09: true };
+                                    this.trdeal_form = { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true };
+                                    this.prdapp_form = { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true, answer07: true, answer08: true, answer09: true };
+                                    this.intrat_form = { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true, answer07: true, answer08: true };
+                    
+
+                                })
+                                .catch((error) => {
+                                    console.log(error);
+                                })
+
+                        } else {
                             this.$bvToast.toast(data.status, {
                                 title: 'Error',
                                 variant: 'danger',
                                 solid: true
-                              })
+                            })
                         }
-                        
-                        
+
+
                     })
                     .catch((error) => {
                         console.log(error);
-                        this.$bvToast.toast(`${error}`, {
+                        this.$bvToast.toast(error, {
                             title: 'Error',
                             variant: 'danger',
                             solid: true
-                          })
+                        })
                     })
 
             },
-            submitReport(event) {
-                let q_result = {};
-                q_result.business_component = this.form.bc;
-                q_result.questionnaire = [];
-                q_result.status="FINAL"
-                this.$children.forEach(element => {
-                    if (typeof (element.computeScore) !== 'undefined') {
-                        let result = element._data;
-                        result.score = element.computeScore();
-                        q_result.questionnaire.push(result);
-                    }
-                });
-                console.log(q_result);
-            },
-            editQuestionnaire(item, index, button){
+            editQuestionnaire(item, index, button) {
+                //reset all questionnaires and responses
+                this.contrl = false;
+                this.people = false;
+                this.exectn = false;
+                this.buscon = false;
+                this.rskctl = false;
+                this.intlam = false;
+                this.phsacc = false;
+                this.polpro = false;
+                this.ccrass = false;
+                this.ccradm = false;
+                this.modmgt = false;
+                this.datqty = false;
+                this.trding = false;
+                this.prdapp = false;
+                this.extlam = false;
+                this.corsys = false;
+                this.vendor = false;
+                this.trdeal = false;
+                this.liqdty = false;
+                this.intrat = false;
+                this.contrl_form = { answer01: true, answer02: true, answer03: true };
+                this.people_form = { answer01: true, answer02: 0, answer03: 100, answer04: 100, answer05: 100, answer06: true };
+                this.exectn_form = { answer01_04: 100, answer05: 100, answer06: 100 };
+                this.buscon_form = { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true, answer07: true, answer08: true, answer09: true };
+                this.rskctl_form = { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true, answer07: true, answer08: true, answer09: true };
+                this.intlam_form = { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true, answer07: true, answer08: true, answer09: true };
+                this.phsacc_form = { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true, answer07: true };
+                this.polpro_form = { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true, answer07: true };
+                this.datqty_form = { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true, answer07: true, answer08: true, answer09: true, answer10: true };
+                this.vendor_form = { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true, answer07: true };
+                this.corsys_form = { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true, answer07: true, answer08: true, answer09: true, answer10: true };
+                this.extlam_form = { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true };
+                this.trding_form = { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true, answer07: true, answer08: true, answer09: true, answer10: true };
+                this.modmgt_form = { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true, answer07: true, answer08: true, answer09: true, answer10: true, answer11: true, answer12: true };
+                this.ccrass_form = { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true, answer07: true, answer08: true, answer09: true, answer10: true };
+                this.ccradm_form = { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true, answer07: true };
+                this.liqdty_form = { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true, answer07: true, answer08: true, answer09: true };
+                this.trdeal_form = { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true };
+                this.prdapp_form = { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true, answer07: true, answer08: true, answer09: true };
+                this.intrat_form = { answer01: true, answer02: true, answer03: true, answer04: true, answer05: true, answer06: true, answer07: true, answer08: true };
+
                 console.log(item);
                 console.log(index);
+                this.selected_item = item;
+
+                switch (item.status) {
+                    case "NEW":
+                        this.form.q_buttons = true;
+                        //console.log(item.response.business_component);
+                        window.user_data.forEach(element => {
+                            if (element.business_component == item.response.business_component) {
+                                element.ercsa.forEach(elm => this[elm.toLowerCase()] = true)
+                            }
+                        })
+                        break;
+
+                    case "IN PROGRESS":
+                        this.form.q_buttons = true;
+                        item.response.questionnaire.forEach(elm => {
+                            this[elm.ercsa.toLowerCase()] = true;
+                            this[elm.ercsa.toLowerCase() + "_form"] = elm.form;
+                        })
+                        break;
+
+                    case "DONE":
+                    default:
+                        break;
+                }
+
+
             }
         },
         template: `
@@ -479,7 +558,6 @@ Vue.component('ercsa',
             </b-card-text>
 
             <b-table :items="bcercsa"></b-table>
-
             
         </b-card>
 
@@ -491,18 +569,11 @@ Vue.component('ercsa',
         <b-table striped hover :items="table_responses" :fields="table_fields">
         <template #cell(actions)="row">
         <b-button size="sm" @click="editQuestionnaire(row.item, row.index, $event.target)" class="mr-1" :disabled="row.item.status=='DONE'">
-          {{ (row.item.status=="NEW")?'New Questionnaire':'Continue Responding'}}
+          {{ (row.item.status=="NEW")?'New Questionnaire':(row.item.status =="IN PROGRESS"?'Continue Responding':'No Further Action')}}
         </b-button>
       </template>
         </b-table>
 
-        <b-form v-if="form.show">
-            <b-form-group id="gr-bc" label="Business Component:" label-for="input-bc">
-            <b-form-select id="input-bc" v-model="form.bc" :options="bc" required></b-form-select>
-            </b-form-group>
-
-            <b-button type="button" variant="primary" @click="showQuestionnaire($event)">New Questionnaire</b-button>
-        </b-form>
         </b-card>
 
         <b-container fluid>
@@ -569,9 +640,11 @@ Vue.component('ercsa',
 
             <template v-if="form.q_buttons">
             <b-row class="mx-3 p-3">
-                <b-col>
-                    <b-button variant="warning" @click="submitReport($event)">Submit questionnaire</b-button>
-                    <b-button variant="success" @click="saveReport($event)">Save questionnaire</b-button>
+                <b-col cols="10">
+                    <b-button variant="warning" @click="saveReport($event,'DONE')">Finalize and Close Questionnaire</b-button>
+                </b-col>
+                <b-col cols="2">
+                    <b-button pill variant="success" @click="saveReport($event,'IN PROGRESS')">Save</b-button>
                 </b-col>
             </b-row>
             </template>

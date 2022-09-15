@@ -47,7 +47,7 @@ function createVueApp() {
                         getData('/questionnaire')
                             .then(data => {
                                 //augment the result set
-                                this.responses = data.result;
+                                this.responses = augmentERCSAQuestionnaire(data.result);
                                 this.theComponent = 'ercsa';
                                 console.log("show ercsa");
                             })

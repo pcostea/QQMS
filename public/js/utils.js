@@ -51,7 +51,7 @@ function getBusinessComponentERCSA() {
     window.user_data.forEach(element => {
         let bc = window.md.business_component.find(elm => elm.shortname == element.business_component);
         let ercsa = element.ercsa.join(', ');
-        result.push({'business_component': bc.component, 'business_service': bc.service , 'ERCSA_categories': ercsa})
+        result.push({ 'business_component': bc.component, 'business_service': bc.service, 'ERCSA_categories': ercsa })
     });
     return result;
 
@@ -60,10 +60,59 @@ function getBusinessComponentERCSA() {
 function getBusinessComponent() {
     let result = [];
 
-    window.user_data.forEach(element =>{
+    window.user_data.forEach(element => {
         let value = element.business_component;
         let text = window.md.business_component.find(elm => elm.shortname == value).service;
-        result.push({text: text, value: value});
+        result.push({ text: text, value: value });
     })
     return result;
+}
+
+function augmentERCSAQuestionnaire(responses) {
+    let result = responses;
+    //add current quarters for this year Q1-Q4 according to local date
+    let quater = Math.floor((new Date()).getMonth() / 3 + 1), year = (new Date()).getFullYear();
+    //build the augmented part
+    if (result.length > 0) {
+        result.forEach((e, idx) => {
+            result[idx].bc = window.md.business_component.find(elm => elm.shortname == e.response.business_component).component;
+            result[idx].bs = window.md.business_component.find(elm => elm.shortname == e.response.business_component).service;
+            result[idx].y = result[idx].response.y;
+            result[idx].q = result[idx].response.q;
+        });
+    }
+    window.user_data.forEach(element => {
+        for (let q = 1; q <= quater; q++) {
+            if (responses.length == 0) {
+                result.push({
+                    q: q,
+                    y: year,
+                    status: "NEW",
+                    bc: window.md.business_component.find(elm => elm.shortname == element.business_component).component,
+                    bs: window.md.business_component.find(elm => elm.shortname == element.business_component).service,
+                    response: {
+                        status: "NEW",
+                        business_component: element.business_component
+                    }
+                })
+            } else {
+                if (responses.findIndex((e) => { return typeof e.response !== 'undefined' && e.response.q == q && e.response.y == year && e.response.business_component == element.business_component }) == -1) {
+                    result.push({
+                        q: q,
+                        y: year,
+                        status: "NEW",
+                        bc: window.md.business_component.find(elm => elm.shortname == element.business_component).component,
+                        bs: window.md.business_component.find(elm => elm.shortname == element.business_component).service,
+                        response: {
+                            status: "NEW",
+                            business_component: element.business_component
+                        }
+                    })
+                }
+            }
+        }
+    })
+
+    return result;
+
 }

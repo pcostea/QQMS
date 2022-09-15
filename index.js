@@ -148,23 +148,34 @@ app.get("/md", function (req, res) {
     res.redirect('/index.html')
 })
 
-app.post("/questionnaire", isAuthenticated, async function(req, res, next){
-    pino.logger.info(req.body.payload);
+app.post("/questionnaire", isAuthenticated, async function (req, res, next) {
+    //pino.logger.info(req.body.payload);
+    //pino.logger.info(req.body.extra);
 
     const client = await pool.connect()
     try {
-        //pino.logger.info(req.body.password)
-        let result = await client.query(`INSERT INTO ercsa_response(application_user_id, response, status, ts) 
-        VALUES(
-            (SELECT uid FROM application_user WHERE email = '${req.session.user[0].username}'), 
-            '${JSON.stringify(req.body.payload)}', '${req.body.payload.status}', 
-            NOW());`)
-        //pino.logger.info(result)
-        res.json({ status: 'OK - Questionnaire response succesfuly registered' });
-
+        //make it an upsert
+        if (typeof req.body.extra.uid === 'undefined') {
+            let result = await client.query(`INSERT INTO ercsa_response(application_user_id, response, status, ts) 
+            VALUES(
+                (SELECT uid FROM application_user WHERE email = '${req.session.user[0].username}'), 
+                '${JSON.stringify(req.body.payload)}', '${req.body.payload.status}', 
+                NOW());`)
+            //pino.logger.info(result)
+            res.json({ status: 'OK - Questionnaire response succesfuly registered' });
+        }else{
+            let result = await client.query(`UPDATE ercsa_response SET
+            response = '${JSON.stringify(req.body.payload)}', 
+            status = '${req.body.payload.status}', 
+            ts = NOW() 
+                WHERE application_user_id =(SELECT uid FROM application_user WHERE email = '${req.session.user[0].username}') AND
+                uid =${req.body.extra.uid};`)
+            //pino.logger.info(result)
+            res.json({ status: 'OK - Questionnaire response succesfuly updated' });
+        }
     } catch (err) {
         pino.logger.error(err);
-        res.json({ status: 'Questionnaire response value error' });
+        res.json({ status: 'Questionnaire response error' });
     } finally {
         // Make sure to release the client before any error handling,
         // just in case the error handling itself throws an error.
@@ -172,22 +183,22 @@ app.post("/questionnaire", isAuthenticated, async function(req, res, next){
     }
 })
 
-app.get("/questionnaire", isAuthenticated, async function(req, res, next){
+app.get("/questionnaire", isAuthenticated, async function (req, res, next) {
     const client = await pool.connect()
     try {
         let bc = [];
         req.session.user.forEach(element => {
             bc.push(element.business_component);
         });
-        bc = JSON.stringify(bc).replaceAll("[","").replaceAll("]","").replaceAll("\"","'")
+        bc = JSON.stringify(bc).replaceAll("[", "").replaceAll("]", "").replaceAll("\"", "'");
 
         let result = await client.query(`
-        select uid, application_user_id, response, status, extract (year from ts) as y, extract (quarter from ts) as q from ercsa_response
+        select uid, application_user_id, response, status from ercsa_response
         where application_user_id = (select uid from application_user where email = '${req.session.user[0].username}') AND 
         response->>'business_component' in (${bc})
-        order by  y desc, q desc, response->>'business_component'
+        order by  response->>'y' desc, response->>'q' desc, response->>'business_component'
         `)
-        pino.logger.info(result);
+        //pino.logger.info(result);
         res.json({ status: 'OK - Results for MD', result: result.rows })
     } catch (err) {
         pino.logger.error(err);
@@ -197,7 +208,7 @@ app.get("/questionnaire", isAuthenticated, async function(req, res, next){
     }
 })
 
-app.get("/questionnaire", function(req, res){
+app.get("/questionnaire", function (req, res) {
     res.redirect("/index.html")
 })
 
